@@ -1,7 +1,7 @@
 import java.io.*;
 import java.util.*;
 
-public class MultiplexState implements Serializable {
+public final class MultiplexState implements Serializable {
 
     private final ArrayList<Theater> theaters = new ArrayList<>();
 
@@ -20,7 +20,6 @@ public class MultiplexState implements Serializable {
                 default -> {return null;}
             }
         }
-
         public String getFileExtension() {
             switch (this) {
                 case THEATERS, MOVIES -> {return ".txt";}
@@ -56,30 +55,31 @@ public class MultiplexState implements Serializable {
                     }
 
                 } else {
-                    String warning = String.format("%s was ignored; doesn't match config file format '%s[1-9]%s'"
-                            , fileName, noun, fExt);
+                    String warning = String.format("%s was not loaded; doesn't match config file format '%s[1-9]%s'",
+                            fileName, noun, fExt);
                     System.out.println(warning);
                 }
             }
         }
-        else System.out.println("dar warning de q no se encontraron las files");
+        else {
+            String exceptionText = String.format("%s files were not found at %s", noun, directory);
+            throw new RuntimeException(exceptionText);
+        }
         return selectedFiles;
     }
 
 
-    private void loadState(){
-        for (File theatreFile: getFiles(FileType.THEATERS)){
-            for (File movieFile: getFiles(FileType.MOVIES)){
+    private void loadAllFiles(){
+        for (File theatreFile: getFiles(FileType.THEATERS))
+            for (File movieFile: getFiles(FileType.MOVIES))
                 if (((TheaterFile)theatreFile).getTheaterNumber() == ((MovieFile)movieFile).getTheaterNumber()){
                     Theater theater = new Theater((TheaterFile)theatreFile, (MovieFile)movieFile);
                     theaters.add(theater);
                 }
-            }
-        }
         Collections.sort(theaters);
     }
 
     public MultiplexState() {
-        loadState();
+        loadAllFiles();
     }
 }

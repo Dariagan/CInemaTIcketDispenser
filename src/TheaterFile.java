@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import static java.util.Objects.isNull;
 
-public class TheaterFile extends File {
+public final class TheaterFile extends File {
 
     public TheaterFile (File file){
         super(file.getAbsolutePath());

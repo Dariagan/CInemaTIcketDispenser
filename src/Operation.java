@@ -10,7 +10,7 @@ public abstract class Operation {
         this.multi = multi;
     }
 
-    public abstract void doOperation();
+    public abstract boolean doOperation();
     
     public abstract String getTitle();
     

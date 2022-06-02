@@ -1,6 +1,6 @@
 import sienens.CinemaTicketDispenser;
 
-public class CreditCardManager {
+public final class CreditCardManager {
 
     public static boolean retrievedCreditCard(CinemaTicketDispenser dispenser) {
 

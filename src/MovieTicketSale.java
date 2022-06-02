@@ -5,7 +5,7 @@ import java.util.List;
 
 import static java.util.Objects.isNull;
 
-public class MovieTicketSale extends Operation{
+public final class MovieTicketSale extends Operation{
     private final MultiplexState state;
     private final CinemaTicketDispenser dispenser;
     private final PerformPayment payment;
@@ -13,22 +13,29 @@ public class MovieTicketSale extends Operation{
     public MovieTicketSale(CinemaTicketDispenser dispenser, Multiplex multi){
         super(dispenser, multi);
         this.dispenser = dispenser;
-        //if (newDayOrRecovery)
+        //todo if (newDayOrRecovery)
             this.state = new MultiplexState();
 
         this.payment = new PerformPayment(dispenser, multi);
     }
 
-    public void doOperation(){
+    public boolean doOperation(){
 
         Theater selectedTheater = selectTheater();
-        if(isNull(selectedTheater)) return;
+        if(isNull(selectedTheater))
+            return false;
 
         Session selectedSession = selectSession(selectedTheater);
-        if(isNull(selectedSession)) return;
+        if(isNull(selectedSession))
+            return false;
 
-        selectSeats(selectedTheater, selectedSession);
+        ArrayList<Seat> selectedSeats = selectSeats(selectedTheater, selectedSession);
+        if(isNull(selectedSeats))
+            return false;
 
+        performPayment(selectedTheater, selectedSeats);
+
+        return true;
     }
 
     private int dispenserReturnToIndex(char dispenserReturn){
@@ -43,15 +50,15 @@ public class MovieTicketSale extends Operation{
 
         char dispenserReturn = dispenser.waitEvent(30);
 
-        if (dispenserReturn == '1') {
+        if (dispenserReturn == 0)
+            return null;
+        else if (dispenserReturn == '1')
             if(CreditCardManager.retrievedCreditCard(dispenser))
                 getPick(list);
             else return null;
-        }else if(listElementWasPicked(dispenserReturn, list)) {
+        else if(listElementWasPicked(dispenserReturn, list))
             return (list.get(dispenserReturnToIndex(dispenserReturn)));
-        }else{
-            return null;//tratar null (equivalente a cancelar)
-        }
+        else return null;
 
         return null;
     }
@@ -68,6 +75,8 @@ public class MovieTicketSale extends Operation{
 
     private Theater selectTheater(){
 
+        dispenser.setTitle(this.getTitle());
+
         setOptions(state.getTheaters());
 
         return (Theater)getPick(state.getTheaters());
@@ -75,16 +84,16 @@ public class MovieTicketSale extends Operation{
 
     private Session selectSession(Theater theater){
 
-        dispenser.setTitle("seleccione sesión");
-        //dispenser.setImage("");
-        dispenser.setDescription(theater.getMovie().getDescription());
+        dispenser.setTitle("duración: x. seleccione sesión");
+        dispenser.setImage(theater.getMOVIE().getIMAGE());
+        dispenser.setDescription(theater.getMOVIE().getDESCRIPTION());
 
         setOptions(theater.getSessionList());
 
         return (Session)getPick(theater.getSessionList());
     }
 
-    private void selectSeats(Theater theater, Session session){
+    private ArrayList<Seat> selectSeats(Theater theater, Session session){
 
         dispenser.setTitle("seleccione butacas");
         dispenser.setOption(0, "cancelar");
@@ -107,7 +116,14 @@ public class MovieTicketSale extends Operation{
                     }
                     selectedSeats.clear();
                 }
-                //case 1:
+
+                //TODO case 1: TRATAR CON TARJETA METIDA
+                case '1' ->{
+                    if (CreditCardManager.retrievedCreditCard(dispenser)){
+                        cancel = false;
+                    } else cancel = true; accept = false;
+                }
+
                 case 'B' -> {cancel = false; accept = true;}
                 default -> {
                     cancel = false; accept = false;
@@ -125,14 +141,15 @@ public class MovieTicketSale extends Operation{
                         dispenser.markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.OCCUPIED.ordinal());
                     }
                 }
-
             }
-            if (!cancel) dispenser.setOption(1, "aceptar");
+            if (!cancel && !selectedSeats.isEmpty()) dispenser.setOption(1, "aceptar");
+            else dispenser.setOption(1, null);
         }while(!(accept||cancel));
-        System.out.println("SALIMOS");
-        if (accept){
 
+        if (accept){
+            return selectedSeats;
         }
+        else return null;
     }
 
     private void presentSeats(Theater theater, Session session){
@@ -170,19 +187,11 @@ public class MovieTicketSale extends Operation{
         return new Seat(row, col);
     }
 
-    private boolean performPayment(){
+    private boolean performPayment(Theater selectedTheater, ArrayList<Seat> selectedSeats) {
 
-        computePrice();
+        payment.setPurchase(selectedTheater, selectedSeats);
 
-        payment.doOperation();
-
-        return false;
-    }
-
-
-
-    private void computePrice(){
-
+        return payment.doOperation();
     }
 
     public String getTitle(){

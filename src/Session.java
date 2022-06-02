@@ -6,20 +6,17 @@ import static java.util.Objects.isNull;
 
 public final class Session implements Serializable, Comparable<Session>{
 
-    private final LocalTime time;
-
+    private final LocalTime TIME;
     private final TreeSet<Seat> occupiedSeatSet = new TreeSet<>();
 
     public Session(LocalTime time) {
-        this.time = time;
+        this.TIME = time;
     }
 
-    private LocalTime getTime() {
-        return time;
-    }
+    private LocalTime getTIME() {return TIME;}
 
     public String toString() {
-        return time.toString();
+        return TIME.toString();
     }
     
     public boolean isOccupied(Seat seat){
@@ -38,9 +35,9 @@ public final class Session implements Serializable, Comparable<Session>{
 
     @Override
     public int compareTo(Session o) {
-        if (this.getTime().isAfter(o.getTime())){
+        if (this.getTIME().isAfter(o.getTIME())){
             return 1;
-        }else if (this.getTime().equals(o.getTime())){
+        }else if (this.getTIME().equals(o.getTIME())){
             return 0;
         } else return -1;
     }

@@ -11,20 +11,19 @@ import java.util.*;
 public final class Theater implements Serializable, Comparable<Theater>{
 
 
-    private final int number;
-    private int price;
+    private final int NUMBER;
+    private final int PRICE;
     private int maxRows;
     private int maxCols;
-    private final Movie movie;
+    private final Movie MOVIE;
     private final TreeSet<Seat> seatSet = new TreeSet<>();
     private final ArrayList<Session> sessionList = new ArrayList<>();
 
-    //Hice que se le pasen las files como argumentos y no el fileName (String) porque no me parece bien que a un
-    //constructor público se le pueda pasar cualquier String como argumento.
     public Theater(TheaterFile theaterFile, MovieFile movieFile){
 
-        this.number = theaterFile.getTheaterNumber();
-        this.movie = new Movie(movieFile);
+        this.NUMBER = theaterFile.getTheaterNumber();
+        this.MOVIE = new Movie(movieFile);
+        this.PRICE = movieFile.getPrice();
 
         loadSeats(theaterFile);
         loadSessions(movieFile);
@@ -34,9 +33,9 @@ public final class Theater implements Serializable, Comparable<Theater>{
         return sessionList;
     }
 
-    public int getNumber() {return number;}
-    public Movie getMovie(){return movie;}
-    public int getPrice() {return price;}
+    public int getNUMBER() {return NUMBER;}
+    public Movie getMOVIE(){return MOVIE;}
+    public int getPRICE() {return PRICE;}
     public int getMaxRows() {return maxRows;}
     public int getMaxCols() {return maxCols;}
     public TreeSet<Seat> getSeatSet() {return seatSet;}
@@ -58,11 +57,11 @@ public final class Theater implements Serializable, Comparable<Theater>{
     }
 
     public String toString() {
-        return movie.getTitle();
+        return MOVIE.getTITLE();
     }
 
     @Override
     public int compareTo(Theater o) {
-        return Integer.compare(this.getNumber(), o.getNumber());
+        return Integer.compare(this.getNUMBER(), o.getNUMBER());
     }
 }

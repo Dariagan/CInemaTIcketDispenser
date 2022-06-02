@@ -1,4 +1,4 @@
-public class CinemaDispenser {
+public final class CinemaDispenser {
 
     public static void main(String[] args) {
 

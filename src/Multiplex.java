@@ -1,6 +1,6 @@
 import sienens.CinemaTicketDispenser;
 
-public class Multiplex {
+public final class Multiplex {
     private String language;
 
     public Multiplex(String language) {

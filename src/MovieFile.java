@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 import static java.util.Objects.isNull;
 
-public class MovieFile extends File {
+public final class MovieFile extends File {
 
     private final String timeFormat = "^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$";
 
@@ -37,6 +37,15 @@ public class MovieFile extends File {
     public int getDuration (){
         return computeMovieDuration(getRawDataSubString(Field.DURATION));
     }
+    public String getPoster () {
+        return System.getProperty("user.dir") + "\\data\\pics\\" + getRawDataSubString(Field.POSTER);
+    }
+    public int getPrice (){
+        String rawDataString =  getRawDataSubString(Field.PRICE);
+
+        return Integer.parseInt(rawDataString.substring(0, rawDataString.length()-2));
+    }
+
     public ArrayList<LocalTime> getSessionsTime(){
         return collectSessionsTimes(getRawDataSubString(Field.SESSIONS));
     }
@@ -101,7 +110,7 @@ public class MovieFile extends File {
                 line = line.trim();
                 if (!line.isBlank()) {
                     switch (searchedField){
-                        case THEATER_NUMBER, TITLE, SESSIONS, DURATION->{
+                        case THEATER_NUMBER, TITLE, SESSIONS, DURATION, POSTER, PRICE->{
                             if (line.startsWith(searchedField.toString())){
                                 return line.substring(searchedField.toString().length());
                             }

@@ -1,17 +1,22 @@
 import java.io.Serializable;
 
-public class Movie implements Serializable{
-    private final String name;
-    private final String description;
-    private final int duration;
+public final class Movie implements Serializable{
+    private final String TITLE;
+    private final String DESCRIPTION;
+    private final int DURATION;
+    private final String IMAGE;
 
-    public String getTitle() {return name;}
-    public String getDescription() {return description;}
+
+    public String getTITLE() {return TITLE;}
+    public String getDESCRIPTION() {return DESCRIPTION;}
+    public int getDURATION() {return DURATION;}//TODO usar
+    public String getIMAGE() {return IMAGE;}
 
     public Movie(MovieFile movieFile) {
-        name = movieFile.getTitle();
-        description = movieFile.getDescription();
-        duration = movieFile.getDuration();
+        TITLE = movieFile.getTitle();
+        DESCRIPTION = movieFile.getDescription();
+        DURATION = movieFile.getDuration();
+        IMAGE = movieFile.getPoster();
     }
 
 }

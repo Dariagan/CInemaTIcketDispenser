@@ -2,7 +2,7 @@ import sienens.CinemaTicketDispenser;
 
 import java.util.*;
 
-public class MainMenu extends Operation{
+public final class MainMenu extends Operation{
     private List<Operation> operationList = new ArrayList<Operation>();
     LanguageSelection language;
     MovieTicketSale sale;
@@ -14,16 +14,25 @@ public class MainMenu extends Operation{
     }
 
     @Override
-    public void doOperation() {
+    public boolean doOperation() {
         presentMenu();
+
+        return true;
     }
 
     @Override
     public String getTitle() {
-        return null;
+        return "elija una opción";
     }
 
     public void presentMenu(){
+
+        getDispenser().setTitle(this.getTitle());
+
+        getDispenser().setMenuMode();
+        getDispenser().setDescription("");
+        getDispenser().setImage(null);
+
         String optionA = language.getTitle();
         getDispenser().setOption(0, optionA);
 

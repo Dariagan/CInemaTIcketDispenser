@@ -7,8 +7,9 @@ public final class LanguageSelection extends Operation{
     }
 
     @Override
-    public void doOperation() {
+    public boolean doOperation() {
 
+        return true;
     }
 
     public String getTitle(){//título para la pantalla.

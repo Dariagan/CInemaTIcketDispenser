@@ -5,7 +5,7 @@ import java.io.Serializable;
  */
 public record Seat(int row, int col) implements Serializable, Comparable<Seat> {
 
-    public static enum State{
+    public enum State{
         NOT_A_SEAT, OCCUPIED, UNOCCUPIED
     }
 
