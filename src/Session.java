@@ -9,9 +9,7 @@ public final class Session implements Serializable, Comparable<Session>{
     private final LocalTime TIME;
     private final TreeSet<Seat> occupiedSeatSet = new TreeSet<>();
 
-    public Session(LocalTime time) {
-        this.TIME = time;
-    }
+    public Session(LocalTime time) {this.TIME = time;}
 
     private LocalTime getTIME() {return TIME;}
 
@@ -26,7 +24,7 @@ public final class Session implements Serializable, Comparable<Session>{
     public void occupySeat(Seat seat){
         if (!isNull(seat))
             occupiedSeatSet.add(seat);
-        else throw new RuntimeException("Passed null seat to session");
+        else throw new RuntimeException("Attempt to occupy a null seat in a session");
     }
     
     public void unoccupySeat(Seat seat){

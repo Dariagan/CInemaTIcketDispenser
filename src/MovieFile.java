@@ -9,7 +9,7 @@ import static java.util.Objects.isNull;
 
 public final class MovieFile extends File {
 
-    private final String timeFormat = "^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$";
+    private final String TIME_FORMAT = "^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$";
 
     public MovieFile (File file){
         super(file.getAbsolutePath());
@@ -45,8 +45,7 @@ public final class MovieFile extends File {
 
         return Integer.parseInt(rawDataString.substring(0, rawDataString.length()-2));
     }
-
-    public ArrayList<LocalTime> getSessionsTime(){
+    public ArrayList<LocalTime> getSessionsTimes(){
         return collectSessionsTimes(getRawDataSubString(Field.SESSIONS));
     }
     public ArrayList<LocalTime> collectSessionsTimes(String rawDataLine){
@@ -58,7 +57,7 @@ public final class MovieFile extends File {
         for (int i = 0; i < nSessions; i++) {
             int offset = i*6;
 
-            if (rawDataLine.substring(offset, 5 + offset).matches(timeFormat)) {
+            if (rawDataLine.substring(offset, 5 + offset).matches(TIME_FORMAT)) {
                 int hour = Integer.parseInt(rawDataLine.substring(offset, offset + 2));
                 int minute = Integer.parseInt(rawDataLine.substring(offset + 3, offset + 5));
 
@@ -67,14 +66,13 @@ public final class MovieFile extends File {
                 foundSessionsTimes.add(sessionTime);
             }
         }
-
         return foundSessionsTimes;
     }
 
     private int computeMovieDuration(String rawDataLine) {
 
-        if (rawDataLine.substring(0, 5).matches(timeFormat)
-                && rawDataLine.substring(6, 11).matches(timeFormat)){
+        if (rawDataLine.substring(0, 5).matches(TIME_FORMAT)
+                && rawDataLine.substring(6, 11).matches(TIME_FORMAT)){
             int startHour = Integer.parseInt(rawDataLine.substring(0,2));
             int startMinute = Integer.parseInt(rawDataLine.substring(3,5));
 

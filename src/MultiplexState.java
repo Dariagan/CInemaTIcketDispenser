@@ -23,8 +23,7 @@ public final class MultiplexState implements Serializable {
         public String getFileExtension() {
             switch (this) {
                 case THEATERS, MOVIES -> {return ".txt";}
-                default -> {return null;
-                }
+                default -> {return null;}
             }
         }
     }
@@ -32,12 +31,12 @@ public final class MultiplexState implements Serializable {
     private ArrayList<File> getFiles(FileType fileType) {
 
         String dirPath = System.getProperty("user.dir") + "\\data" + fileType.getDir();
-        File directory = new File(dirPath);
+        File dataFolder = new File(dirPath);
 
         String noun = fileType.toString();
         String fExt = fileType.getFileExtension();
 
-        File[] readFiles = directory.listFiles();
+        File[] readFiles = dataFolder.listFiles();
         ArrayList<File> selectedFiles = new ArrayList<>();
 
         if (readFiles != null) {
@@ -62,12 +61,11 @@ public final class MultiplexState implements Serializable {
             }
         }
         else {
-            String exceptionText = String.format("%s files were not found at %s", noun, directory);
+            String exceptionText = String.format("%s files were not found at %s", noun, dataFolder);
             throw new RuntimeException(exceptionText);
         }
         return selectedFiles;
     }
-
 
     private void loadAllFiles(){
         for (File theatreFile: getFiles(FileType.THEATERS))

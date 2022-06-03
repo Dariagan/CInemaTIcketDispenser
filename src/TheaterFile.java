@@ -2,10 +2,13 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.TreeSet;
 
 import static java.util.Objects.isNull;
 
 public final class TheaterFile extends File {
+
+    private final String fileNameNoun = "Theater";
 
     public TheaterFile (File file){
         super(file.getAbsolutePath());
@@ -15,14 +18,13 @@ public final class TheaterFile extends File {
 
         String theaterFileName = this.getName();
 
-        if (theaterFileName.startsWith(this.toString())) {
-            return Character.getNumericValue(theaterFileName.charAt(this.toString().length()));
+        if (theaterFileName.startsWith(fileNameNoun)) {
+            return Character.getNumericValue(theaterFileName.charAt(fileNameNoun.length()));
         }
         else throw new RuntimeException("Theater file name " + theaterFileName + " not recognized.");
-
     }
 
-    public ArrayList<Seat> getSeats (TheaterFile file, int[] maxRows, int[] maxCols){
+    public TreeSet<Seat> getSeats (TheaterFile file, int[] maxRows, int[] maxCols){
         try{
             String filePath = file.getAbsolutePath();
             java.io.FileReader fr = new java.io.FileReader(filePath);
@@ -30,7 +32,7 @@ public final class TheaterFile extends File {
 
             String line;
 
-            ArrayList<Seat> foundSeats = new ArrayList<>();
+            TreeSet<Seat> foundSeats = new TreeSet<>();
             maxRows[0] = 0;
 
             int i;
@@ -52,9 +54,5 @@ public final class TheaterFile extends File {
         catch (IOException e){
             throw new RuntimeException(e);
         }
-    }
-
-    public String toString(){
-        return "Theater";
     }
 }

@@ -1,18 +1,15 @@
 import sienens.CinemaTicketDispenser;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import static java.util.Objects.isNull;
 
 public final class MovieTicketSale extends Operation{
     private final MultiplexState state;
-    private final CinemaTicketDispenser dispenser;
     private final PerformPayment payment;
 
     public MovieTicketSale(CinemaTicketDispenser dispenser, Multiplex multi){
         super(dispenser, multi);
-        this.dispenser = dispenser;
         //todo if (newDayOrRecovery)
             this.state = new MultiplexState();
 
@@ -22,82 +19,43 @@ public final class MovieTicketSale extends Operation{
     public boolean doOperation(){
 
         Theater selectedTheater = selectTheater();
-        if(isNull(selectedTheater))
-            return false;
+        if(isNull(selectedTheater)) return false;
 
         Session selectedSession = selectSession(selectedTheater);
-        if(isNull(selectedSession))
-            return false;
+        if(isNull(selectedSession)) return false;
 
         ArrayList<Seat> selectedSeats = selectSeats(selectedTheater, selectedSession);
-        if(isNull(selectedSeats))
+        if(isNull(selectedSeats)) return false;
+
+        if (performPayment(selectedTheater, selectedSeats)) return true;
+        else{
+            for (Seat seat : selectedSeats)
+                selectedSession.unoccupySeat(seat);
+            selectedSeats.clear();
             return false;
-
-        performPayment(selectedTheater, selectedSeats);
-
-        return true;
-    }
-
-    private int dispenserReturnToIndex(char dispenserReturn){
-        return dispenserReturn - 'A';
-    }
-
-    private boolean listElementWasPicked(char dispenserReturn, List list){
-            return dispenserReturnToIndex(dispenserReturn) < list.size();
-    }
-
-    private Object getPick(List list){
-
-        char dispenserReturn = dispenser.waitEvent(30);
-
-        if (dispenserReturn == 0)
-            return null;
-        else if (dispenserReturn == '1')
-            if(CreditCardManager.retrievedCreditCard(dispenser))
-                getPick(list);
-            else return null;
-        else if(listElementWasPicked(dispenserReturn, list))
-            return (list.get(dispenserReturnToIndex(dispenserReturn)));
-        else return null;
-
-        return null;
-    }
-
-    private void setOptions(List list){
-        for (int i = 0; i < list.size(); i++){
-            dispenser.setOption(i, list.get(i).toString());
-        }
-        dispenser.setOption(list.size(), "CANCELAR");
-        for (int i = list.size()+1; i <= 5; i++){
-            dispenser.setOption(i, null);
         }
     }
 
     private Theater selectTheater(){
 
-        dispenser.setTitle(this.getTitle());
+        DispenserMenu.configureMenu(getDispenser(), state.getTheaters(), this.toString(), "elegir peli nase");
 
-        setOptions(state.getTheaters());
-
-        return (Theater)getPick(state.getTheaters());
+        return (Theater) DispenserMenu.getPickedObject(getDispenser(), state.getTheaters());
     }
 
     private Session selectSession(Theater theater){
 
-        dispenser.setTitle("duración: x. seleccione sesión");
-        dispenser.setImage(theater.getMOVIE().getIMAGE());
-        dispenser.setDescription(theater.getMOVIE().getDESCRIPTION());
+        final ArrayList<Session> sessions = theater.getSessionList();
+        final String MOVIE_DESCRIPTION = theater.getMovie().getDESCRIPTION();
+        final String MOVIE_IMAGE = theater.getMovie().getIMAGE();
+        final String DISPENSER_TITLE = "duración: x. seleccione sesión";
 
-        setOptions(theater.getSessionList());
+        DispenserMenu.configureMenu(getDispenser(), sessions, DISPENSER_TITLE, MOVIE_DESCRIPTION, MOVIE_IMAGE);
 
-        return (Session)getPick(theater.getSessionList());
+        return (Session) DispenserMenu.getPickedObject(getDispenser(), theater.getSessionList());
     }
 
     private ArrayList<Seat> selectSeats(Theater theater, Session session){
-
-        dispenser.setTitle("seleccione butacas");
-        dispenser.setOption(0, "cancelar");
-        dispenser.setOption(1, null);
 
         presentSeats(theater, session);
 
@@ -106,21 +64,21 @@ public final class MovieTicketSale extends Operation{
         ArrayList<Seat> selectedSeats = new ArrayList<>();
 
         do{
-            char dispenserReturn = dispenser.waitEvent(30);
+            char dispenserReturn = getDispenser().waitEvent(30);
             switch (dispenserReturn){
                 case 0,'A' -> {
                     cancel = true; accept = false;
                     for (Seat seat:selectedSeats){
                         session.unoccupySeat(seat);
-                        dispenser.markSeat(seat.row(), seat.col(), Seat.State.UNOCCUPIED.ordinal());
+                        getDispenser().markSeat(seat.row(), seat.col(), Seat.State.UNOCCUPIED.ordinal());
                     }
                     selectedSeats.clear();
                 }
 
-                //TODO case 1: TRATAR CON TARJETA METIDA
                 case '1' ->{
-                    if (CreditCardManager.retrievedCreditCard(dispenser)){
+                    if (CreditCardManager.rejectCreditCard(getDispenser())){
                         cancel = false;
+                        presentSeats(theater, session);
                     } else cancel = true; accept = false;
                 }
 
@@ -131,20 +89,20 @@ public final class MovieTicketSale extends Operation{
                     if (selectedSeats.contains(pickedSeat)) {
                         selectedSeats.remove(pickedSeat);
                         session.unoccupySeat(pickedSeat);
-                        dispenser.markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.UNOCCUPIED.ordinal());
+                        getDispenser().markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.UNOCCUPIED.ordinal());
                     }
-                    else if (theater.getSeatSet().contains(pickedSeat)
+                    else if (theater.hasSeat(pickedSeat)
                             && !session.isOccupied(pickedSeat)
                             && selectedSeats.size() < 4){
                         selectedSeats.add(pickedSeat);
                         session.occupySeat(pickedSeat);
-                        dispenser.markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.OCCUPIED.ordinal());
+                        getDispenser().markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.OCCUPIED.ordinal());
                     }
                 }
             }
-            if (!cancel && !selectedSeats.isEmpty()) dispenser.setOption(1, "aceptar");
-            else dispenser.setOption(1, null);
-        }while(!(accept||cancel));
+            if (!cancel && !selectedSeats.isEmpty()) getDispenser().setOption(1, "aceptar");
+            else getDispenser().setOption(1, null);
+        }while(!(accept || cancel));
 
         if (accept){
             return selectedSeats;
@@ -157,26 +115,29 @@ public final class MovieTicketSale extends Operation{
         final int MAX_ROWS = theater.getMaxRows();
         final int MAX_COLS = theater.getMaxCols();
 
-        dispenser.setTheaterMode(MAX_ROWS, MAX_COLS);
+        getDispenser().setTitle("seleccione butacas");
+        getDispenser().setOption(0, "cancelar");
+        getDispenser().setOption(1, null);
+        getDispenser().setTheaterMode(MAX_ROWS, MAX_COLS);
 
         for (int i = 1; i <= MAX_ROWS; i++){
             for (int j = 1; j <= MAX_COLS; j++){
                 final Seat.State state;
                 Seat seatAtPos = new Seat(i, j);
 
-                if (theater.getSeatSet().contains(seatAtPos)){
+                if (theater.hasSeat(seatAtPos)){
                     if (session.isOccupied(seatAtPos))
                         state = Seat.State.OCCUPIED;
                     else state = Seat.State.UNOCCUPIED;
                 }
                 else state = Seat.State.NOT_A_SEAT;
 
-                dispenser.markSeat(i, j, state.ordinal());
+                getDispenser().markSeat(i, j, state.ordinal());
             }
         }
     }
 
-    private int extractByte(char encodedChar,int offsetFromRight) {
+    private int extractByte(char encodedChar, int offsetFromRight) {
         return ((1 << 8) - 1) & (encodedChar >> (offsetFromRight));
     }
     private Seat getSeatFromEncodedChar(char in) {
@@ -194,7 +155,7 @@ public final class MovieTicketSale extends Operation{
         return payment.doOperation();
     }
 
-    public String getTitle(){
+    public String toString(){
         return "comprar ticket";
     }
 

@@ -2,15 +2,23 @@ import sienens.CinemaTicketDispenser;
 
 public final class CreditCardManager {
 
-    public static boolean retrievedCreditCard(CinemaTicketDispenser dispenser) {
+    public static boolean rejectCreditCard(CinemaTicketDispenser dispenser) {
 
-        boolean cardPickedUp = dispenser.expelCreditCard(30);
+        dispenser.setMessageMode();
+        dispenser.setTitle("TARJETA INDEBIDAMENTE INTRODUCIDA");
+        dispenser.setDescription("RETIRE LA TARJETA INTRODUCIDA");//todo translate
+        dispenser.setOption(0, null);
+        dispenser.setOption(1, null);
 
-        if (!cardPickedUp) {
+        dispenser.retainCreditCard(false);
+
+        if (dispenser.expelCreditCard(30)) {
+            return true;
+        }
+        else {
             dispenser.retainCreditCard(true);
             return false;
         }
-        else return true;
     }
 
 }

@@ -12,7 +12,7 @@ public abstract class Operation {
 
     public abstract boolean doOperation();
     
-    public abstract String getTitle();
+    public abstract String toString();
     
     public Multiplex getMultiplex(){return multi;}
     

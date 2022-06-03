@@ -1,9 +1,9 @@
 import sienens.CinemaTicketDispenser;
 
 public final class Multiplex {
-    private String language;
+    private LanguageSelection.Language language;
 
-    public Multiplex(String language) {
+    public Multiplex(LanguageSelection.Language language) {
         this.language = language;
     }
 
@@ -15,12 +15,12 @@ public final class Multiplex {
             menu.doOperation();
     }
 
-    public String getLanguage(){
+    public LanguageSelection.Language getLanguage(){
         return language;
     }
 
-    public void setLanguage(String language){
-        this.language=language;
+    public void setLanguage(LanguageSelection.Language language){
+        this.language = language;
     }
 
 }

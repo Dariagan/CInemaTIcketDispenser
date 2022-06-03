@@ -6,15 +6,18 @@ public final class LanguageSelection extends Operation{
         super(dispenser, multi);
     }
 
+    public enum Language{
+        SPANISH, ENGLISH, CATALAN, BASQUE
+    }
+
     @Override
     public boolean doOperation() {
 
+        getMultiplex().setLanguage(null);//TODO
         return true;
     }
 
-    public String getTitle(){//título para la pantalla.
+    public String toString(){
         return "cambiar idioma";
     }
-
-
 }

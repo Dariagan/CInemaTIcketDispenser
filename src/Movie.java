@@ -9,7 +9,8 @@ public final class Movie implements Serializable{
 
     public String getTITLE() {return TITLE;}
     public String getDESCRIPTION() {return DESCRIPTION;}
-    public int getDURATION() {return DURATION;}//TODO usar
+    public int getDURATION() {return DURATION;}
+    //TODO usar la duration
     public String getIMAGE() {return IMAGE;}
 
     public Movie(MovieFile movieFile) {
