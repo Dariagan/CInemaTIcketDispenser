@@ -8,6 +8,7 @@ public final class PerformPayment extends Operation{
     private Theater selectedTheater;
     private ArrayList<Seat> purchasedSeats;
     private int totalPrice;
+    private final MultiplexState state;
 
     public void setPurchase(Theater selectedTheater, ArrayList<Seat> purchasedSeats){
         this.selectedTheater = selectedTheater; this.purchasedSeats = purchasedSeats;
@@ -22,32 +23,45 @@ public final class PerformPayment extends Operation{
         getDispenser().setOption(0, "cancelar");
         getDispenser().setOption(1, null);
 
-        switch (getDispenser().waitEvent(30)){
-            case 0, 'A' -> {return false;}
-            case '1' -> {
-                if(bank.comunicationAvaiable())
-                    try {
-                        if(bank.doOperation(getDispenser().getCardNumber(), totalPrice)) {
-                            getDispenser().setOption(1, "aceptar");
-                            //TODO comprobar que agarre su tarjeta de vuelta, ah y expulsarla
-
-                            return true;
-                        }else return false;
+        if (getDispenser().waitEvent(30) == '1') {
+            getDispenser().retainCreditCard(false);
+            if (bank.comunicationAvaiable()) {
+                try {
+                    if (state.getCreditCardManager().cardHasDiscount(getDispenser().getCardNumber())) {
+                        getDispenser().setDescription("tiene un descuento del 30% por ser un socio");
+                        getDispenser().waitEvent(2);
+                        totalPrice = (totalPrice * 7) / 10;
+                        getDispenser().setTitle(this.toString());
                     }
-                    catch (Exception e){
-                        printUnavailabilityMessage();
+
+                    if (bank.doOperation(getDispenser().getCardNumber(), totalPrice)) {
+                        getDispenser().setOption(1, "pagar");
+
+                        ArrayList<String> ticket = new ArrayList<>();
+
+                        String movie = String.format("todo");
+                        ticket.add(selectedTheater.getMovie().getTITLE());//TODO
+
+                        //todo agregar el resto
+
+                        getDispenser().print(ticket);//TODO
+                        CreditCardManager.returnCreditCard(getDispenser());
+                        getDispenser().setDescription("gracias por su compra");
+
+                        return true;
+                    }
+                    else {
+                        //nase
                         return false;
                     }
-                else {
-                    printUnavailabilityMessage();
-                    //preguntar si sucede esto se resetea el ticket-making o se espera hasta q este available y se continúa
-                    return false;
-                }
+                } catch (Exception ignored) {}
             }
-            default -> {return false;}
+            printUnavailabilityMessage();
+            //preguntar si sucede esto se resetea el ticket-making o se espera hasta q este available y se continúa
         }
-
+        return false;
     }
+
 
     private void printUnavailabilityMessage(){
         getDispenser().setDescription("en estos momentos no podemos atenderte");//TODO translate
@@ -59,12 +73,12 @@ public final class PerformPayment extends Operation{
 
     @Override
     public String toString() {
-        String title = String.format("%d entradas para %s: %d €",//TODO falta el translate
+        return String.format("%d entradas para %s: %d €",//TODO falta el translate
                 purchasedSeats.size(), selectedTheater.getMovie().getTITLE(), totalPrice);
-        return title;
     }
 
-    public PerformPayment(CinemaTicketDispenser dispenser, Multiplex multi) {
+    public PerformPayment(CinemaTicketDispenser dispenser, Multiplex multi, MultiplexState state) {
         super(dispenser, multi);
+        this.state = state;
     }
 }

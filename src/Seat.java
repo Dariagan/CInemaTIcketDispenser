@@ -6,7 +6,7 @@ import java.io.Serializable;
 public record Seat(int row, int col) implements Serializable, Comparable<Seat> {
 
     public enum State{
-        NOT_A_SEAT, OCCUPIED, UNOCCUPIED
+        NOT_A_SEAT, OCCUPIED, UNOCCUPIED, SELECTED
     }
 
     @Override

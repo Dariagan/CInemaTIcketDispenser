@@ -11,9 +11,10 @@ public final class MovieTicketSale extends Operation{
     public MovieTicketSale(CinemaTicketDispenser dispenser, Multiplex multi){
         super(dispenser, multi);
         //todo if (newDayOrRecovery)
-            this.state = new MultiplexState();
+            this.state = new MultiplexState();//hacer solo esto si es new day o recovery, sino recargarlo.
+        //else de-serializar
 
-        this.payment = new PerformPayment(dispenser, multi);
+        this.payment = new PerformPayment(dispenser, multi, state);
     }
 
     public boolean doOperation(){
@@ -31,7 +32,6 @@ public final class MovieTicketSale extends Operation{
         else{
             for (Seat seat : selectedSeats)
                 selectedSession.unoccupySeat(seat);
-            selectedSeats.clear();
             return false;
         }
     }
@@ -96,7 +96,7 @@ public final class MovieTicketSale extends Operation{
                             && selectedSeats.size() < 4){
                         selectedSeats.add(pickedSeat);
                         session.occupySeat(pickedSeat);
-                        getDispenser().markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.OCCUPIED.ordinal());
+                        getDispenser().markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.SELECTED.ordinal());
                     }
                 }
             }

@@ -2,8 +2,10 @@ import sienens.CinemaTicketDispenser;
 
 import java.util.*;
 
+import static java.util.Objects.isNull;
+
 public final class MainMenu extends Operation{
-    private final List<Operation> operationList = new ArrayList<>();//TODO algo
+    private final List<Operation> operationList = new ArrayList<>();
     LanguageSelection language;
     MovieTicketSale sale;
 
@@ -17,8 +19,16 @@ public final class MainMenu extends Operation{
 
     @Override
     public boolean doOperation() {
-        presentMenu();
 
+        Operation pickedOperation;
+        boolean pickedAnOption;
+        do {
+            presentMenu();
+            pickedOperation = ((Operation) DispenserMenu.getPickedObject(getDispenser(), operationList));
+            pickedAnOption = !isNull(pickedOperation);
+            if(pickedAnOption)
+                pickedOperation.doOperation();
+        } while(pickedAnOption);
         return true;
     }
 
@@ -30,9 +40,6 @@ public final class MainMenu extends Operation{
     public void presentMenu(){
 
         DispenserMenu.configureMenu(getDispenser(), operationList, this.toString(), false);
-
-        ((Operation)DispenserMenu.getPickedObject(getDispenser(), operationList)).doOperation();
-
     }
 
 }

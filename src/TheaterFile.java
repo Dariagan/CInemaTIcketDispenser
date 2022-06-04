@@ -30,12 +30,9 @@ public final class TheaterFile extends File {
             java.io.FileReader fr = new java.io.FileReader(filePath);
             BufferedReader br  = new BufferedReader(fr);
 
-            String line;
-
             TreeSet<Seat> foundSeats = new TreeSet<>();
             maxRows[0] = 0;
-
-            int i;
+            int i; String line;
             for(i = 1; !isNull(line = br.readLine()); i++){
                 int j;
                 for (j = 1; j <= line.length(); j++){

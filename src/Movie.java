@@ -6,8 +6,6 @@ public final class Movie implements Serializable{
     private final int DURATION;
     private final String IMAGE;
 
-
-    public String getTITLE() {return TITLE;}
     public String getDESCRIPTION() {return DESCRIPTION;}
     public int getDURATION() {return DURATION;}
     //TODO usar la duration
@@ -20,4 +18,7 @@ public final class Movie implements Serializable{
         IMAGE = movieFile.getPoster();
     }
 
+    public String getTITLE() {
+        return TITLE;
+    }
 }
