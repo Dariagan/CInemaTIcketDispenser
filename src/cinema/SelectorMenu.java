@@ -4,7 +4,7 @@ import sienens.CinemaTicketDispenser;
 
 import java.util.ArrayList;
 
-public class MenuSelector {
+public class SelectorMenu {
 
     private final CinemaTicketDispenser dispenser;
     private final ArrayList optionList;
@@ -13,7 +13,7 @@ public class MenuSelector {
     private final String image;
     private final boolean hasCancelButton;
 
-    private MenuSelector(Builder builder){
+    private SelectorMenu(Builder builder){
         this.dispenser = builder.dispenser;
         this.optionList = builder.optionList;
         this.title = builder.title;
@@ -50,8 +50,8 @@ public class MenuSelector {
             this.hasCancelButton = true;
             return this;
         }
-        public MenuSelector build(){
-            return new MenuSelector(this);
+        public SelectorMenu build(){
+            return new SelectorMenu(this);
         }
     }
 

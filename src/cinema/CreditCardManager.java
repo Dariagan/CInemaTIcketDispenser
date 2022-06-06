@@ -2,9 +2,10 @@ package cinema;
 
 import sienens.CinemaTicketDispenser;
 
+import java.io.Serializable;
 import java.util.HashSet;
 
-public final class CreditCardManager {
+public final class CreditCardManager implements Serializable {
 
     HashSet<Long> allAssociates;
 

@@ -3,13 +3,24 @@ package cinema;
 import file_management.*;
 
 import java.io.*;
+import java.time.LocalDate;
 import java.util.*;
+
+import static java.time.LocalDate.now;
 
 public final class MultiplexState implements Serializable {
 
-    private final ArrayList<Theater> theaters = new ArrayList<>();
+
+
+    private static final String stateFileName = "state.dat";
+    private LocalDate creationDate;
+
+    private ArrayList<Theater> theaters = new ArrayList<>();
     private CreditCardManager creditCardManager;
 
+    public static String getFileName() {return stateFileName;}
+
+    public LocalDate getDate() {return creationDate;}
     public ArrayList<Theater> getTheaters() {return theaters;}
     public CreditCardManager getCreditCardManager() {return creditCardManager;}
 
@@ -27,7 +38,6 @@ public final class MultiplexState implements Serializable {
         Collections.sort(theaters);
     }
 
-
     private void loadCreditCards(){
         AssociateFilesFactory aFactory = new AssociateFilesFactory();
 
@@ -44,6 +54,6 @@ public final class MultiplexState implements Serializable {
 
         loadCinemaFiles();
         loadCreditCards();
-
+        creationDate = LocalDate.now();
     }
 }

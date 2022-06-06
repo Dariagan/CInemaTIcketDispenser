@@ -12,8 +12,6 @@ public abstract class FilesFactory {
     String getFileExtension() {return fileExtension;}
     String getFileNameNoun() {return fileNameNoun;}
 
-
-
     public FilesFactory(String filesFolder, String fileExtension) {
         this.filesFolder = filesFolder;
         this.fileExtension = fileExtension;
@@ -53,5 +51,5 @@ public abstract class FilesFactory {
         return foundFiles;
     }
 
-    abstract boolean extraSelectionConditionIsMet(String fileName);
+    boolean extraSelectionConditionIsMet(String fileName){return true;}
 }

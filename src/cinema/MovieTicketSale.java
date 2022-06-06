@@ -2,21 +2,49 @@ package cinema;
 
 import sienens.CinemaTicketDispenser;
 
+import java.io.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static java.util.Objects.isNull;
 
-public final class MovieTicketSale extends Operation{
-    private final MultiplexState state;
+public final class MovieTicketSale extends Operation {
+    private MultiplexState state;
     private final PerformPayment payment;
 
     public MovieTicketSale(CinemaTicketDispenser dispenser, Multiplex multi){
         super(dispenser, multi);
-        //todo if (newDayOrRecovery)
-            this.state = new MultiplexState();//hacer solo esto si es new day o recovery, sino recargarlo.
-        //else de-serializar
 
+        try {
+            if(deserializeMultiplexState()) {
+                if (state.getDate().isBefore(LocalDate.now())) {
+                    this.state = new MultiplexState();
+                    System.out.println("Multiplex state reset due to new day");
+                }
+            }else{
+                System.out.printf("%s not found, resetting multiplex state.%n", MultiplexState.getFileName());
+                state = new MultiplexState();
+            }
+        }catch (Exception e){
+           throw new RuntimeException(e);
+        }
         this.payment = new PerformPayment(dispenser, multi, state);
+    }
+
+    public void serializeMultiplexState() throws IOException {
+        FileOutputStream fOut = new FileOutputStream(MultiplexState.getFileName());
+        ObjectOutputStream out = new ObjectOutputStream(fOut);
+        out.writeObject(state);
+        out.flush();
+        out.close();
+    }
+    public boolean deserializeMultiplexState() throws IOException, ClassNotFoundException {
+        if (new File(MultiplexState.getFileName()).isFile()) {
+            ObjectInputStream in = new ObjectInputStream(new FileInputStream(MultiplexState.getFileName()));
+            state = (MultiplexState) in.readObject();
+            in.close();
+            return true;
+        } else return false;
     }
 
     public boolean doOperation(){
@@ -30,7 +58,14 @@ public final class MovieTicketSale extends Operation{
         ArrayList<Seat> selectedSeats = selectSeats(selectedTheater, selectedSession);
         if(isNull(selectedSeats)) return false;
 
-        if (performPayment(selectedTheater, selectedSeats)) return true;
+        if (performPayment(selectedTheater, selectedSeats)){
+            try{
+                serializeMultiplexState();
+                return true;
+            } catch (Exception e){
+                throw new RuntimeException(e);
+            }
+        }
         else{
             for (Seat seat : selectedSeats)
                 selectedSession.unoccupySeat(seat);
@@ -40,13 +75,11 @@ public final class MovieTicketSale extends Operation{
 
     private Theater selectTheater(){
 
-        MenuSelector.Builder sBuilder = new MenuSelector.Builder(getDispenser(), state.getTheaters());
+        SelectorMenu.Builder sBuilder = new SelectorMenu.Builder(getDispenser(), state.getTheaters());
 
-        sBuilder.title(this.toString());
-        sBuilder.description("no se");
-        sBuilder.addCancelButton();
+        sBuilder.title(this.toString()).description("no se").addCancelButton();
 
-        MenuSelector theaterSelector = sBuilder.build();
+        SelectorMenu theaterSelector = sBuilder.build();
         theaterSelector.display();
 
         return (Theater) theaterSelector.getPick();
@@ -54,14 +87,14 @@ public final class MovieTicketSale extends Operation{
 
     private Session selectSession(Theater theater){
 
-        MenuSelector.Builder sBuilder = new MenuSelector.Builder(getDispenser(), theater.getSessionList());
+        SelectorMenu.Builder sBuilder = new SelectorMenu.Builder(getDispenser(), theater.getSessionList());
 
         sBuilder.title("elegir sesión");
         sBuilder.description(theater.getMovie().getDescription());
         sBuilder.image(theater.getMovie().getImage());
         sBuilder.addCancelButton();
 
-        MenuSelector sessionSelector = sBuilder.build();
+        SelectorMenu sessionSelector = sBuilder.build();
         sessionSelector.display();
 
         return (Session) sessionSelector.getPick();
@@ -173,11 +206,4 @@ public final class MovieTicketSale extends Operation{
         return "comprar ticket";
     }
 
-    private void serializeMultiplexState(){
-
-    }
-
-    private void deserializeMultiplexState(){
-
-    }
 }

@@ -16,7 +16,7 @@ public class AssociateFile extends File {
         super(file.getAbsolutePath());
     }
 
-    public HashSet<Long> getAssociates(){//todo volver list de Long
+    public HashSet<Long> getAssociates(){
 
         try {
             HashSet<Long> foundAssociates = new HashSet<>();
