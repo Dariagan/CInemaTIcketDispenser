@@ -1,16 +1,17 @@
+package file_management;
+
+import cinema.Seat;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.TreeSet;
 
 import static java.util.Objects.isNull;
 
 public final class TheaterFile extends File {
 
-    private final String fileNameNoun = "Theater";
-
-    public TheaterFile (File file){
+    public TheaterFile(File file) {
         super(file.getAbsolutePath());
     }
 
@@ -18,8 +19,8 @@ public final class TheaterFile extends File {
 
         String theaterFileName = this.getName();
 
-        if (theaterFileName.startsWith(fileNameNoun)) {
-            return Character.getNumericValue(theaterFileName.charAt(fileNameNoun.length()));
+        if (theaterFileName.startsWith("Theater")) {
+            return Character.getNumericValue(theaterFileName.charAt("Theater".length()));
         }
         else throw new RuntimeException("Theater file name " + theaterFileName + " not recognized.");
     }

@@ -1,22 +1,21 @@
+package cinema;
+
 import sienens.CinemaTicketDispenser;
 
-import java.util.Arrays;
+import java.util.HashSet;
 
 public final class CreditCardManager {
 
-    private final long[] allAssociatesArray;
+    HashSet<Long> allAssociates;
 
-    public CreditCardManager(long[] allAssociatesArray) {
-        Arrays.sort(allAssociatesArray);
-        this.allAssociatesArray = allAssociatesArray;
+    public CreditCardManager(HashSet<Long> allAssociates) {
+        this.allAssociates = allAssociates;
     }
 
-    public static boolean rejectCreditCard(CinemaTicketDispenser dispenser) {
+    public static boolean returnUnwantedCard(CinemaTicketDispenser dispenser) {
 
         dispenser.setMessageMode();
         dispenser.setTitle("TARJETA INDEBIDAMENTE INTRODUCIDA");//todo translate
-
-        dispenser.retainCreditCard(false);
 
         return returnCreditCard(dispenser);
     }
@@ -26,7 +25,7 @@ public final class CreditCardManager {
         dispenser.setOption(0, null);
         dispenser.setOption(1, null);
         dispenser.setDescription("retire su tarjeta");//todo translate
-        return recCreditCardPickedUp(dispenser, 10);
+        return recCreditCardPickedUp(dispenser, 3);
     }
 
     private static boolean recCreditCardPickedUp(CinemaTicketDispenser dispenser, int nAttempts){
@@ -46,20 +45,7 @@ public final class CreditCardManager {
     }
 
     public boolean cardHasDiscount(Long card) {
-        int l = 0;
-        int r = allAssociatesArray.length-1;
-
-        while (l <= r) {
-            int mid = (l + r)/2;
-
-            if (card == allAssociatesArray[mid])
-                return true;
-            else if (card < allAssociatesArray[mid])
-                r = mid - 1;
-            else
-                l = mid + 1;
-        }
-        return false;
+        return allAssociates.contains(card);
     }
 
 }

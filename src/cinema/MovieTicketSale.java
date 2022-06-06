@@ -1,3 +1,5 @@
+package cinema;
+
 import sienens.CinemaTicketDispenser;
 
 import java.util.ArrayList;
@@ -38,21 +40,31 @@ public final class MovieTicketSale extends Operation{
 
     private Theater selectTheater(){
 
-        DispenserMenu.configureMenu(getDispenser(), state.getTheaters(), this.toString(), "elegir peli nase");
+        MenuSelector.Builder sBuilder = new MenuSelector.Builder(getDispenser(), state.getTheaters());
 
-        return (Theater) DispenserMenu.getPickedObject(getDispenser(), state.getTheaters());
+        sBuilder.title(this.toString());
+        sBuilder.description("no se");
+        sBuilder.addCancelButton();
+
+        MenuSelector theaterSelector = sBuilder.build();
+        theaterSelector.display();
+
+        return (Theater) theaterSelector.getPick();
     }
 
     private Session selectSession(Theater theater){
 
-        final ArrayList<Session> sessions = theater.getSessionList();
-        final String MOVIE_DESCRIPTION = theater.getMovie().getDESCRIPTION();
-        final String MOVIE_IMAGE = theater.getMovie().getIMAGE();
-        final String DISPENSER_TITLE = "duración: x. seleccione sesión";
+        MenuSelector.Builder sBuilder = new MenuSelector.Builder(getDispenser(), theater.getSessionList());
 
-        DispenserMenu.configureMenu(getDispenser(), sessions, DISPENSER_TITLE, MOVIE_DESCRIPTION, MOVIE_IMAGE);
+        sBuilder.title("elegir sesión");
+        sBuilder.description(theater.getMovie().getDescription());
+        sBuilder.image(theater.getMovie().getImage());
+        sBuilder.addCancelButton();
 
-        return (Session) DispenserMenu.getPickedObject(getDispenser(), theater.getSessionList());
+        MenuSelector sessionSelector = sBuilder.build();
+        sessionSelector.display();
+
+        return (Session) sessionSelector.getPick();
     }
 
     private ArrayList<Seat> selectSeats(Theater theater, Session session){
@@ -66,7 +78,8 @@ public final class MovieTicketSale extends Operation{
         do{
             char dispenserReturn = getDispenser().waitEvent(30);
             switch (dispenserReturn){
-                case 0,'A' -> {
+
+                case 0,'A' -> {//(timeout o cancel)
                     cancel = true; accept = false;
                     for (Seat seat:selectedSeats){
                         session.unoccupySeat(seat);
@@ -76,13 +89,14 @@ public final class MovieTicketSale extends Operation{
                 }
 
                 case '1' ->{
-                    if (CreditCardManager.rejectCreditCard(getDispenser())){
+                    if (CreditCardManager.returnUnwantedCard(getDispenser())){
                         cancel = false;
                         presentSeats(theater, session);
                     } else cancel = true; accept = false;
                 }
 
                 case 'B' -> {cancel = false; accept = true;}
+
                 default -> {
                     cancel = false; accept = false;
                     Seat pickedSeat = getSeatFromEncodedChar(dispenserReturn);

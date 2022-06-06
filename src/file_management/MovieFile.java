@@ -1,3 +1,5 @@
+package file_management;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -7,7 +9,7 @@ import java.util.ArrayList;
 
 import static java.util.Objects.isNull;
 
-public final class MovieFile extends File {
+public final class MovieFile extends File implements Comparable<File>{
 
     private final String TIME_FORMAT = "^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$";
 
@@ -126,5 +128,13 @@ public final class MovieFile extends File {
             throw new RuntimeException(e);
         }
         throw new RuntimeException(searchedField.toString()+" not found in "+movieFilePath);
+    }
+
+    @Override
+    public int compareTo(File o) {
+        if (o instanceof MovieFile){
+            return Integer.compare(this.getTheaterNumber(),((MovieFile) o).getTheaterNumber());
+        }
+        else throw new RuntimeException("should not be compared");
     }
 }

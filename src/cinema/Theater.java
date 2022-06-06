@@ -1,8 +1,11 @@
-/*
+package cinema;/*
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
+import file_management.MovieFile;
+import file_management.TheaterFile;
 
 import java.io.*;
 import java.time.LocalTime;
@@ -59,7 +62,7 @@ public final class Theater implements Serializable, Comparable<Theater>{
     }
 
     public String toString() {
-        return movie.getTITLE();
+        return movie.getTitle();
     }
 
     @Override

@@ -1,3 +1,5 @@
+package cinema;
+
 import sienens.CinemaTicketDispenser;
 
 import java.util.*;
@@ -5,9 +7,10 @@ import java.util.*;
 import static java.util.Objects.isNull;
 
 public final class MainMenu extends Operation{
-    private final List<Operation> operationList = new ArrayList<>();
-    LanguageSelection language;
-    MovieTicketSale sale;
+    private final ArrayList<Operation> operationList = new ArrayList<>();
+    private LanguageSelection language;
+    private MovieTicketSale sale;
+    private MenuSelector menuSelector;
 
     public MainMenu(CinemaTicketDispenser dispenser, Multiplex multi) {
         super(dispenser, multi);
@@ -24,12 +27,11 @@ public final class MainMenu extends Operation{
         boolean pickedAnOption;
         do {
             presentMenu();
-            pickedOperation = ((Operation) DispenserMenu.getPickedObject(getDispenser(), operationList));
+            pickedOperation = (Operation) menuSelector.getPick();
             pickedAnOption = !isNull(pickedOperation);
             if(pickedAnOption)
                 pickedOperation.doOperation();
-        } while(pickedAnOption);
-        return true;
+        } while(true);
     }
 
     @Override
@@ -38,8 +40,11 @@ public final class MainMenu extends Operation{
     }
 
     public void presentMenu(){
-
-        DispenserMenu.configureMenu(getDispenser(), operationList, this.toString(), false);
+        MenuSelector.Builder sBuilder = new MenuSelector.Builder(getDispenser(), operationList);
+        sBuilder.title(this.toString());
+        sBuilder.description("nose");
+        this.menuSelector = sBuilder.build();
+        menuSelector.display();
     }
 
 }

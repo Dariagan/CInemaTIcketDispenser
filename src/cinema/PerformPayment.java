@@ -1,3 +1,5 @@
+package cinema;
+
 import sienens.CinemaTicketDispenser;
 import urjc.UrjcBankServer;
 
@@ -40,7 +42,7 @@ public final class PerformPayment extends Operation{
                         ArrayList<String> ticket = new ArrayList<>();
 
                         String movie = String.format("todo");
-                        ticket.add(selectedTheater.getMovie().getTITLE());//TODO
+                        ticket.add(selectedTheater.getMovie().getTitle());//TODO
 
                         //todo agregar el resto
 
@@ -74,7 +76,7 @@ public final class PerformPayment extends Operation{
     @Override
     public String toString() {
         return String.format("%d entradas para %s: %d €",//TODO falta el translate
-                purchasedSeats.size(), selectedTheater.getMovie().getTITLE(), totalPrice);
+                purchasedSeats.size(), selectedTheater.getMovie().getTitle(), totalPrice);
     }
 
     public PerformPayment(CinemaTicketDispenser dispenser, Multiplex multi, MultiplexState state) {

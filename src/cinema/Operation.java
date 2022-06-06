@@ -1,3 +1,5 @@
+package cinema;
+
 import sienens.CinemaTicketDispenser;
 
 public abstract class Operation {

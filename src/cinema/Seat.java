@@ -1,3 +1,5 @@
+package cinema;
+
 import java.io.Serializable;
 
 /**
