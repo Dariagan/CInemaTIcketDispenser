@@ -3,50 +3,50 @@ package cinema;
 import sienens.CinemaTicketDispenser;
 
 import java.io.Serializable;
-import java.util.HashSet;
 
-public final class CreditCardManager implements Serializable {
+public final class CreditCardManager extends Operation implements Serializable {
 
-    HashSet<Long> allAssociates;
-
-    public CreditCardManager(HashSet<Long> allAssociates) {
-        this.allAssociates = allAssociates;
+    public CreditCardManager(CinemaTicketDispenser dispenser, Multiplex multiplex) {
+        super(dispenser, multiplex);
     }
 
-    public static boolean returnUnwantedCard(CinemaTicketDispenser dispenser) {
-
-        dispenser.setMessageMode();
-        dispenser.setTitle("TARJETA INDEBIDAMENTE INTRODUCIDA");//todo translate
-
-        return returnCreditCard(dispenser);
+    @Override
+    public boolean doOperation() {
+        return returnUnwantedCard();
     }
 
-    public static boolean returnCreditCard(CinemaTicketDispenser dispenser){
-        dispenser.setMessageMode();
-        dispenser.setOption(0, null);
-        dispenser.setOption(1, null);
-        dispenser.setDescription("retire su tarjeta");//todo translate
-        return recCreditCardPickedUp(dispenser, 3);
+    @Override
+    public String toString() {
+        return "Credit card manager";
     }
 
-    private static boolean recCreditCardPickedUp(CinemaTicketDispenser dispenser, int nAttempts){
+    public boolean returnUnwantedCard() {
 
-        if (dispenser.expelCreditCard(3)) {
-            dispenser.setDescription("");
-            return true;
-        }
-        else if (nAttempts > 0){
-            return recCreditCardPickedUp(dispenser, nAttempts - 1);
+        getDispenser().setMessageMode();
+        getDispenser().setTitle(getMultiplex().getLanguage().getString("unwantedCard"));
+
+        return returnCreditCard();
+    }
+
+    public boolean returnCreditCard(){
+        getDispenser().setMessageMode();
+        getDispenser().setOption(0, null);
+        getDispenser().setOption(1, null);
+        getDispenser().setDescription(getMultiplex().getLanguage().getString("withdrawCard"));
+
+        boolean customerRecoveredCard;
+
+        getDispenser().retainCreditCard(false);//si no pongo esto no espera y se traga la tarjeta instantáneamente
+        if (getDispenser().expelCreditCard(30)) {
+            customerRecoveredCard = true;
         }
         else{
-            dispenser.retainCreditCard(true);
-            dispenser.setDescription("");
-            return false;
+            getDispenser().retainCreditCard(true);
+            customerRecoveredCard = false;
         }
-    }
 
-    public boolean cardHasDiscount(Long card) {
-        return allAssociates.contains(card);
-    }
+        getDispenser().setDescription("");
 
+        return customerRecoveredCard;
+    }
 }

@@ -3,20 +3,19 @@ package cinema;
 import java.io.Serializable;
 import java.time.LocalTime;
 import java.util.*;
-
 import static java.util.Objects.isNull;
 
 public final class Session implements Serializable, Comparable<Session>{
 
-    private final LocalTime TIME;
+    private final LocalTime time;
     private final TreeSet<Seat> occupiedSeatSet = new TreeSet<>();
 
-    public Session(LocalTime time) {this.TIME = time;}
+    public Session(LocalTime time) {this.time = time;}
 
-    private LocalTime getTIME() {return TIME;}
+    private LocalTime getTime() {return time;}
 
     public String toString() {
-        return TIME.toString();
+        return time.toString();
     }
     
     public boolean isOccupied(Seat seat){
@@ -35,9 +34,9 @@ public final class Session implements Serializable, Comparable<Session>{
 
     @Override
     public int compareTo(Session o) {
-        if (this.getTIME().isAfter(o.getTIME())){
+        if (this.getTime().isAfter(o.getTime())){
             return 1;
-        }else if (this.getTIME().equals(o.getTIME())){
+        }else if (this.getTime().equals(o.getTime())){
             return 0;
         } else return -1;
     }

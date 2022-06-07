@@ -13,7 +13,6 @@ public final class Movie implements Serializable, Comparable<Movie>{
 
     public String getDescription() {return DESCRIPTION;}
     public int getDuration() {return DURATION;}
-    //TODO usar la duration
     public String getImage() {return IMAGE;}
 
     public Movie(MovieFile movieFile) {
@@ -24,7 +23,8 @@ public final class Movie implements Serializable, Comparable<Movie>{
         THEATER_NUMBER = movieFile.getTheaterNumber();
     }
 
-    public String getTitle() {
+    @Override
+    public String toString() {
         return TITLE;
     }
 

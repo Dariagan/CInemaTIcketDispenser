@@ -1,5 +1,6 @@
 package cinema;
 
+import cinema.menu_building.MenuModeSelector;
 import sienens.CinemaTicketDispenser;
 
 import java.util.*;
@@ -10,7 +11,7 @@ public final class MainMenu extends Operation{
     private final ArrayList<Operation> operationList = new ArrayList<>();
     private LanguageSelection language;
     private MovieTicketSale sale;
-    private SelectorMenu selectorMenu;
+    private MenuModeSelector menuSelector;
 
     public MainMenu(CinemaTicketDispenser dispenser, Multiplex multi) {
         super(dispenser, multi);
@@ -27,23 +28,25 @@ public final class MainMenu extends Operation{
         boolean pickedAnOption;
         do {
             presentMenu();
-            pickedOperation = (Operation) selectorMenu.getPick();
+            pickedOperation = (Operation) menuSelector.getPick();
             pickedAnOption = !isNull(pickedOperation);
             if(pickedAnOption)
-                pickedOperation.doOperation();
+                if(!pickedOperation.doOperation()){
+                    getMultiplex().setLanguage(new Locale("es","ES"));
+                }
         } while(true);
     }
 
     @Override
     public String toString() {
-        return "elija una opción";
+        return getMultiplex().getLanguage().getString("selectOption");
     }
 
     public void presentMenu(){
-        SelectorMenu.Builder sBuilder = new SelectorMenu.Builder(getDispenser(), operationList);
-        sBuilder.title(this.toString()).description("nose");
-        this.selectorMenu = sBuilder.build();
-        selectorMenu.display();
+        MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
+        builder.setOptionList(operationList);
+        builder.setTitle(this.toString());
+        this.menuSelector = builder.build();
+        menuSelector.display();
     }
-
 }

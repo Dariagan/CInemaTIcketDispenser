@@ -1,7 +1,6 @@
 package file_management;
 
 import cinema.Seat;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -11,7 +10,7 @@ import static java.util.Objects.isNull;
 
 public final class TheaterFile extends File {
 
-    public TheaterFile(File file) {
+    TheaterFile(File file) {
         super(file.getAbsolutePath());
     }
 

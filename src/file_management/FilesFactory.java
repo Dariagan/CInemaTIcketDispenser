@@ -22,6 +22,7 @@ public abstract class FilesFactory {
         this.fileNameNoun = fileNameNoun;
     }
 
+
     ArrayList<File> getMatchingFiles() {
 
         String dirPath = System.getProperty("user.dir") + "\\data\\" + filesFolder;
@@ -37,10 +38,8 @@ public abstract class FilesFactory {
                     foundFiles.add(file);
                     System.out.println(fileName+" loaded");
                 }else {
-                    String warning =
-                            String.format("%s was not loaded; doesn't match file-name format of %s",
-                                    fileName, getClass().getSimpleName());
-                    System.out.println(warning);
+                    System.out.printf("%s was not loaded; doesn't match file-name format of %s",
+                            fileName, getClass().getSimpleName());
                 }
             }
         }

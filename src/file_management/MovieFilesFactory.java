@@ -4,7 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class MovieFilesFactory extends FilesFactory{
+public final class MovieFilesFactory extends FilesFactory{
 
     public MovieFilesFactory() {
         super("movies", ".txt");

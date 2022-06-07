@@ -1,18 +1,14 @@
 package file_management;
 
-import cinema.Seat;
-
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.util.HashSet;
-import java.util.TreeSet;
 
 import static java.util.Objects.isNull;
 
-public class AssociateFile extends File {
+public final class AssociateFile extends File {
 
-    public AssociateFile (File file){
+    AssociateFile (File file){
         super(file.getAbsolutePath());
     }
 

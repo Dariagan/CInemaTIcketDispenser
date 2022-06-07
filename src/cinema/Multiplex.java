@@ -2,32 +2,36 @@ package cinema;
 
 import sienens.CinemaTicketDispenser;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.util.Locale;
+import java.util.ResourceBundle;
 
 public final class Multiplex {
-    private LanguageSelection.Language language;
 
+    private static final String RESOURCE_BUNDLE = "cinema.resource.resource";
+    private ResourceBundle language = ResourceBundle.getBundle(RESOURCE_BUNDLE, new Locale("es","ES"));
+    private CinemaTicketDispenser dispenser = new CinemaTicketDispenser();
+    private CreditCardManager creditCardManager = new CreditCardManager(dispenser, this);
 
-
-    public Multiplex(LanguageSelection.Language language) {
-        this.language = language;
+    public CreditCardManager getCreditCardManager() {
+        return creditCardManager;
     }
 
+    public ResourceBundle getLanguage() {
+        return language;
+    }
+
+    public Multiplex() {}
+
     public void start(){
-        CinemaTicketDispenser dispenser = new CinemaTicketDispenser();
+
         MainMenu menu = new MainMenu(dispenser, this);
 
         while(true)
             menu.doOperation();
     }
 
-    public LanguageSelection.Language getLanguage(){
-        return language;
-    }
-
-    public void setLanguage(LanguageSelection.Language language){
-        this.language = language;
+    public void setLanguage(Locale locale){
+        language = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale);
     }
 
 }

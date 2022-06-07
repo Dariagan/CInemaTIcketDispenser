@@ -6,14 +6,13 @@ import java.io.IOException;
 import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
-
 import static java.util.Objects.isNull;
 
 public final class MovieFile extends File implements Comparable<File>{
 
     private final String TIME_FORMAT = "^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$";
 
-    public MovieFile (File file){
+    MovieFile (File file){
         super(file.getAbsolutePath());
     }
 

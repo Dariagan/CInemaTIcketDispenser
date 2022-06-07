@@ -1,32 +1,42 @@
 package cinema;
 
+import cinema.menu_building.MenuModeSelector;
 import sienens.CinemaTicketDispenser;
 
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.ResourceBundle;
 
 import static java.util.Objects.isNull;
 
 public final class MovieTicketSale extends Operation {
     private MultiplexState state;
     private final PerformPayment payment;
+    private ResourceBundle language;
 
     public MovieTicketSale(CinemaTicketDispenser dispenser, Multiplex multi){
         super(dispenser, multi);
-
+        String usingNewState = ", using new multiplex state.\n";
         try {
-            if(deserializeMultiplexState()) {
+            if (deserializeMultiplexState()) {
                 if (state.getDate().isBefore(LocalDate.now())) {
+                    System.out.printf("state.dat is a day old%s", usingNewState);
                     this.state = new MultiplexState();
-                    System.out.println("Multiplex state reset due to new day");
+                }else{
+                    System.out.println("state.dat loaded");
                 }
-            }else{
-                System.out.printf("%s not found, resetting multiplex state.%n", MultiplexState.getFileName());
-                state = new MultiplexState();
+            }else {
+                System.out.printf("%s not found%s", MultiplexState.getFileName(), usingNewState);
+                this.state = new MultiplexState();
             }
-        }catch (Exception e){
-           throw new RuntimeException(e);
+
+        }catch (IOException|ClassNotFoundException e){
+            if (e instanceof InvalidClassException){
+                System.out.printf("state.dat file-format is obsolete%s", usingNewState);
+                this.state = new MultiplexState();
+            }else
+                throw new RuntimeException(e);
         }
         this.payment = new PerformPayment(dispenser, multi, state);
     }
@@ -49,6 +59,8 @@ public final class MovieTicketSale extends Operation {
 
     public boolean doOperation(){
 
+        language = getMultiplex().getLanguage();
+
         Theater selectedTheater = selectTheater();
         if(isNull(selectedTheater)) return false;
 
@@ -62,7 +74,7 @@ public final class MovieTicketSale extends Operation {
             try{
                 serializeMultiplexState();
                 return true;
-            } catch (Exception e){
+            } catch (IOException e){
                 throw new RuntimeException(e);
             }
         }
@@ -75,11 +87,13 @@ public final class MovieTicketSale extends Operation {
 
     private Theater selectTheater(){
 
-        SelectorMenu.Builder sBuilder = new SelectorMenu.Builder(getDispenser(), state.getTheaters());
+        MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
 
-        sBuilder.title(this.toString()).description("no se").addCancelButton();
+        builder.setOptionList(state.getTheaters());
+        builder.setTitle(language.getString("selectMovie"));
+        builder.setCancelButton();
 
-        SelectorMenu theaterSelector = sBuilder.build();
+        MenuModeSelector theaterSelector = builder.build();
         theaterSelector.display();
 
         return (Theater) theaterSelector.getPick();
@@ -87,14 +101,20 @@ public final class MovieTicketSale extends Operation {
 
     private Session selectSession(Theater theater){
 
-        SelectorMenu.Builder sBuilder = new SelectorMenu.Builder(getDispenser(), theater.getSessionList());
+        Movie movie = theater.getMovie();
 
-        sBuilder.title("elegir sesión");
-        sBuilder.description(theater.getMovie().getDescription());
-        sBuilder.image(theater.getMovie().getImage());
-        sBuilder.addCancelButton();
+        MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
+        builder.setOptionList(theater.getSessionList());
+        builder.setTitle(language.getString("selectSession"));
+        String description = String.format("%s\n%s: %d %s",
+                movie.getDescription(), language.getString("duration"),
+                movie.getDuration(), language.getString("minutes"));
 
-        SelectorMenu sessionSelector = sBuilder.build();
+        builder.setDescription(description);
+        builder.setImage(theater.getMovie().getImage());
+        builder.setCancelButton();
+
+        MenuModeSelector sessionSelector = builder.build();
         sessionSelector.display();
 
         return (Session) sessionSelector.getPick();
@@ -121,14 +141,14 @@ public final class MovieTicketSale extends Operation {
                     selectedSeats.clear();
                 }
 
-                case '1' ->{
-                    if (CreditCardManager.returnUnwantedCard(getDispenser())){
+                case '1' ->{//tarjeta introducida
+                    if (getMultiplex().getCreditCardManager().returnUnwantedCard()){
                         cancel = false;
                         presentSeats(theater, session);
                     } else cancel = true; accept = false;
                 }
 
-                case 'B' -> {cancel = false; accept = true;}
+                case 'B' -> {cancel = false; accept = true;}//"aceptar"
 
                 default -> {
                     cancel = false; accept = false;
@@ -147,7 +167,7 @@ public final class MovieTicketSale extends Operation {
                     }
                 }
             }
-            if (!cancel && !selectedSeats.isEmpty()) getDispenser().setOption(1, "aceptar");
+            if (!cancel && !selectedSeats.isEmpty()) getDispenser().setOption(1, language.getString("accept"));
             else getDispenser().setOption(1, null);
         }while(!(accept || cancel));
 
@@ -162,8 +182,8 @@ public final class MovieTicketSale extends Operation {
         final int MAX_ROWS = theater.getMaxRows();
         final int MAX_COLS = theater.getMaxCols();
 
-        getDispenser().setTitle("seleccione butacas");
-        getDispenser().setOption(0, "cancelar");
+        getDispenser().setTitle(language.getString("selectSeats"));
+        getDispenser().setOption(0, language.getString("cancel"));
         getDispenser().setOption(1, null);
         getDispenser().setTheaterMode(MAX_ROWS, MAX_COLS);
 
@@ -203,7 +223,7 @@ public final class MovieTicketSale extends Operation {
     }
 
     public String toString(){
-        return "comprar ticket";
+        return getMultiplex().getLanguage().getString("buyTicket");
     }
 
 }

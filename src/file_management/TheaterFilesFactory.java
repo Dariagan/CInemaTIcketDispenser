@@ -3,7 +3,7 @@ package file_management;
 import java.io.File;
 import java.util.ArrayList;
 
-public class TheaterFilesFactory extends FilesFactory{
+public final class TheaterFilesFactory extends FilesFactory{
 
     public TheaterFilesFactory() {
         super("theaters", ".txt", "Theater");

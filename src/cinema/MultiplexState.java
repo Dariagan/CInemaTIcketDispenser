@@ -6,24 +6,20 @@ import java.io.*;
 import java.time.LocalDate;
 import java.util.*;
 
-import static java.time.LocalDate.now;
-
 public final class MultiplexState implements Serializable {
 
+    private static final String STATE_FILE_NAME = "state.dat";
+    private final LocalDate creationDate;
+    private final ArrayList<Theater> theaters = new ArrayList<>();
+    private final HashSet<Long> allAssociates = new HashSet<>();
 
-
-    private static final String stateFileName = "state.dat";
-    private LocalDate creationDate;
-
-    private ArrayList<Theater> theaters = new ArrayList<>();
-    private CreditCardManager creditCardManager;
-
-    public static String getFileName() {return stateFileName;}
-
+    public static String getFileName() {return STATE_FILE_NAME;}
     public LocalDate getDate() {return creationDate;}
     public ArrayList<Theater> getTheaters() {return theaters;}
-    public CreditCardManager getCreditCardManager() {return creditCardManager;}
 
+    public boolean cardHasDiscount(Long card) {
+        return allAssociates.contains(card);
+    }
 
     private void loadCinemaFiles(){
         TheaterFilesFactory tFactory = new TheaterFilesFactory();
@@ -41,13 +37,9 @@ public final class MultiplexState implements Serializable {
     private void loadCreditCards(){
         AssociateFilesFactory aFactory = new AssociateFilesFactory();
 
-        HashSet<Long> allAssociates = new HashSet<>();
-
         for (AssociateFile associateFile: aFactory.getFiles()){
             allAssociates.addAll(associateFile.getAssociates());
         }
-
-        creditCardManager = new CreditCardManager(allAssociates);
     }
 
     public MultiplexState() {

@@ -1,12 +1,7 @@
-package cinema;/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+package cinema;
 
 import file_management.MovieFile;
 import file_management.TheaterFile;
-
 import java.io.*;
 import java.time.LocalTime;
 import java.util.*;
@@ -41,9 +36,7 @@ public final class Theater implements Serializable, Comparable<Theater>{
     public Movie getMovie(){return movie;}
     public int getMaxRows() {return maxRows;}
     public int getMaxCols() {return maxCols;}
-    public boolean hasSeat(Seat seat){
-        return seatSet.contains(seat);
-    }
+    public boolean hasSeat(Seat seat){return seatSet.contains(seat);}
 
     private void loadSeats(TheaterFile theaterFile){
         int[] maxRows = {0};
@@ -62,7 +55,7 @@ public final class Theater implements Serializable, Comparable<Theater>{
     }
 
     public String toString() {
-        return movie.getTitle();
+        return movie.toString();
     }
 
     @Override
