@@ -47,6 +47,5 @@ public final class MainMenu extends Operation{
         builder.setOptionList(operationList);
         builder.setTitle(this.toString());
         this.menuSelector = builder.build();
-        menuSelector.display();
     }
 }

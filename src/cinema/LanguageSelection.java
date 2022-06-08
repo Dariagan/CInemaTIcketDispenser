@@ -32,7 +32,6 @@ public final class LanguageSelection extends Operation{
         builder.setTitle(this.toString()).setCancelButton();
 
         MenuModeSelector sMenu = builder.build();
-        sMenu.display();
 
         Locale pickedLocale = (Locale)sMenu.getPick();
         if(!isNull(pickedLocale)){

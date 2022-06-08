@@ -5,13 +5,8 @@ import sienens.CinemaTicketDispenser;
 import urjc.UrjcBankServer;
 
 import javax.naming.CommunicationException;
-import java.text.MessageFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.ArrayList;
-import java.util.Locale;
-import java.util.Random;
 import java.util.ResourceBundle;
 
 import static java.util.Objects.isNull;
@@ -42,19 +37,7 @@ public final class PerformPayment extends Operation{
     public boolean doOperation() {
         language = getMultiplex().getLanguage();
 
-        //todo mover a método
-        builder.reset();
-        builder.setTitle(this.toString());
-
-        String desc = String.format("%s\n\n%s", getFormattedPricing(), language.getString("insertCreditCard"));
-
-        builder.setDescription(desc);
-        builder.setCancelButton();
-        builder.setAcceptViaCreditCard();
-        MessageModeSelector selector = builder.build();
-
-        selector.display();
-        //todo mover a método
+        MessageModeSelector selector = createPurchaseSummaryMenu();
 
         Object answer = selector.getPick();
 
@@ -62,42 +45,57 @@ public final class PerformPayment extends Operation{
             getDispenser().retainCreditCard(false);
             if (bank.comunicationAvaiable()) {
                 try {
-                    boolean customerIsAssociate = state.cardHasDiscount(getDispenser().getCardNumber());
-
-                    if (customerIsAssociate)
-                        displayDiscount();
-
-                    boolean cardHasEnoughBalance = bank.doOperation(getDispenser().getCardNumber(), totalPrice);
-
-                    if (cardHasEnoughBalance) {//todo partir en varios métodos
-                        getDispenser().setOption(1, "pagar");
-
-                        ArrayList<ArrayList<String>> ticketPack;
-
-                        ticketPack = makeTicketPack(selectedSeats);
-
-                        for (ArrayList<String> ticket : ticketPack)
-                            getDispenser().print(ticket);
-
-                        //todo meter los respectivos nºs de asientos entre los n tickets
-
-                        //TODO HAY QUE IMPRIMIR n TICKETS
-                        getMultiplex().getCreditCardManager().returnCreditCard();
-                        getDispenser().setDescription(language.getString("thanks"));//todo cambiar
-
-                        return true;
-                    }
-                    else {
-                        getMultiplex().getCreditCardManager().returnCreditCard();
-                        printInsufficientBalanceMessage();
-                        return false;
-                    }
-                } catch (CommunicationException ignored) {}
+                    return purchase();
+                }
+                catch (CommunicationException ignored) {}
             }
             getMultiplex().getCreditCardManager().returnCreditCard();
-            printUnavailabilityMessage();
+            displayUnavailabilityMessage();
         }
         return false;
+    }
+
+    private MessageModeSelector createPurchaseSummaryMenu(){
+        builder.reset();
+        builder.setTitle(this.toString());
+
+        String formattedPricing = TicketFormatter.getFormattedPricing(totalPrice, language);
+        String desc = String.format("%s\n\n%s", formattedPricing, language.getString("insertCreditCard"));
+
+        builder.setDescription(desc);
+        builder.setCancelButton();
+        builder.setAcceptViaCreditCard();
+        return builder.build();
+    }
+
+    private boolean purchase() throws CommunicationException {
+        if (state.cardHasDiscount(getDispenser().getCardNumber()))
+            displayDiscount();
+
+        boolean cardHasEnoughBalance = bank.doOperation(getDispenser().getCardNumber(), totalPrice);
+
+        if (cardHasEnoughBalance) {
+
+            MessageModeSelector selector = createConfirmPurchaseMenu();
+
+            Object answer = selector.getPick();
+
+            if (!isNull(answer) && (Boolean)answer) {
+
+                for (ArrayList<String> ticket : makeTicketPack(selectedSeats))
+                    getDispenser().print(ticket);
+
+                getMultiplex().getCreditCardManager().returnCreditCard();
+
+                giveThanks();
+                return true;
+            }
+            else return false;
+        } else {
+            getMultiplex().getCreditCardManager().returnCreditCard();
+            displayInsufficientBalanceMessage();
+            return false;
+        }
     }
 
     private void displayDiscount(){
@@ -106,13 +104,37 @@ public final class PerformPayment extends Operation{
         builder.reset();
         builder.setTitle(this.toString());
 
-        String desc = String.format("%s\n\n%s", language.getString("discount"), getFormattedPricing());
+        String formattedPricing = TicketFormatter.getFormattedPricing(totalPrice, language);
+
+        String desc = String.format("%s\n\n%s", language.getString("discount"), formattedPricing);
 
         builder.setDescription(desc);
 
         MessageModeSelector selector = builder.build();
-        selector.display();
-        selector.wait(3);
+
+        selector.show(3);
+    }
+
+    private MessageModeSelector createConfirmPurchaseMenu(){
+        builder.reset();
+        builder.setTitle(this.toString());
+
+        String desc = language.getString("confirm");
+
+        builder.setDescription(desc);
+        builder.setCancelButton();
+        builder.setAcceptButton();
+        return builder.build();
+    }
+
+    private void giveThanks(){
+        builder.reset();
+
+        builder.setDescription(language.getString("thanks"));
+
+        MessageModeSelector selector = builder.build();
+
+        selector.show(3);
     }
 
     private ArrayList<ArrayList<String>> makeTicketPack(ArrayList<Seat> seats){
@@ -123,30 +145,24 @@ public final class PerformPayment extends Operation{
         for (Seat seat:seats) {
 
             Movie movie = selectedTheater.getMovie();
-
             ArrayList<String> ticket = new ArrayList<>();
 
-            String header = this.toString();
-            String price = getFormattedPricing();
-            String session = String.format("%s: %s", language.getString("session"), selectedSession);
+            String purchaseHeader = this.toString();
+            String price = TicketFormatter.getFormattedPricing(totalPrice, language);
+            String session = TicketFormatter.getFormattedSession(selectedSession, language);
+            String duration =  TicketFormatter.getFormattedDuration(movie.getDuration(), language);
+            String date = TicketFormatter.getFormattedDate(LocalDate.now(), language);
+            String seating = TicketFormatter.getFormattedSeating(seat, language);
+            String ticketNumber = TicketFormatter.getFormattedTicketNumber(i, seats.size(), language);
 
-            String duration = String.format("%s: %s %s",
-                    language.getString("duration"), movie.getDuration(), language.getString("minutes"));
-
-            String date = getFormattedDate(LocalDate.now());
-
-            String seating = getFormattedSeating(seat);
-
-            String ticketNumber = getFormattedTicketNumber(i, seats.size());
-
-            ticket.add(header);
+            ticket.add(purchaseHeader);
             ticket.add(price);
             ticket.add(date);
             ticket.add(session);
             ticket.add(duration);
             ticket.add(seating);
             ticket.add(ticketNumber);
-            ticket.add(getRandomBarcode());
+            ticket.add(TicketFormatter.getRandomBarcode());
 
             ticketPack.add(ticket);
             i++;
@@ -154,73 +170,23 @@ public final class PerformPayment extends Operation{
         return ticketPack;
     }
 
-    private String getFormattedPricing(){//todo mover los métodos formater a una clase?
-        return String.format("%s: %d€", language.getString("price"), totalPrice);
-    }
-
-    private String getFormattedDate(LocalDate date){
-
-        Locale locale = language.getLocale();
-
-        DateTimeFormatter dateFormatter = DateTimeFormatter.ofLocalizedDate(FormatStyle.FULL).withLocale(locale);
-
-        String locallyFormattedDate = date.format(dateFormatter);
-
-        return String.format("%s: %s", language.getString("date"), locallyFormattedDate);
-    }
-
-    private String getFormattedSeating(Seat seat){
-
-        return String.format("%s:\n  %s %d\n  %s %d\n",
-                language.getString("seat"),
-                language.getString("row"), seat.row(),
-                language.getString("column"), seat.col());
-    }
-
-    private String getFormattedTicketNumber(int i, int seats){
-        Object[] numbers ={
-                i,
-                seats
-        };
-        MessageFormat ticketNumberFormatter = new MessageFormat(language.getString("ticketNumber"));
-        ticketNumberFormatter.setLocale(language.getLocale());
-        return  ticketNumberFormatter.format(numbers);
-    }
-
-    private String getRandomBarcode(){
-        StringBuilder builder = new StringBuilder("\n");
-        Random random = new Random();
-
-        for (float i=0;i<22;i++) {
-            int pick = random.nextInt(3);
-            switch (pick) {
-                case 0-> {builder.append("❘"); i-=0.9;}
-                case 1-> builder.append("❙");
-                case 2-> {builder.append("❚"); i+=0.2;}
-            }
-        }
-        return builder.toString();
-    }
-
-    private void printUnavailabilityMessage(){
+    private void displayUnavailabilityMessage(){
         builder.reset();
         builder.setTitle(language.getString("sorry"));
-
         builder.setDescription(language.getString("unavailable"));
 
         MessageModeSelector selector = builder.build();
-        selector.display();
-        selector.wait(3);
+
+        selector.show(3);
     }
 
-    private void printInsufficientBalanceMessage(){
+    private void displayInsufficientBalanceMessage(){
         builder.reset();
         builder.setDescription(language.getString("balance"));
 
         MessageModeSelector selector = builder.build();
 
-        selector.display();
-        selector.wait(3);
+        selector.show(3);
 
         getMultiplex().getCreditCardManager().returnCreditCard();
     }
@@ -231,22 +197,6 @@ public final class PerformPayment extends Operation{
 
     @Override
     public String toString() {
-
-        String plural;
-
-        if (selectedSeats.size()>1)
-            plural = "s";
-        else
-            plural = "";
-
-        Object[] messageArguments ={
-                selectedSeats.size(),
-                selectedTheater.getMovie(),
-                plural
-        };
-        MessageFormat purchases = new MessageFormat(language.getString("purchase"));
-        purchases.setLocale(language.getLocale());
-
-        return purchases.format(messageArguments);
+        return TicketFormatter.getFormattedPurchase(selectedTheater.getMovie(), selectedSeats, language);
     }
 }

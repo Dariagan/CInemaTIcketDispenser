@@ -80,13 +80,14 @@ public abstract class AbstractSelector {
         }
     }
 
-    public void display(){
+    private void display(){
         changeDispenserMode();
         displayTextAndExtra();
         displayOptionButtons();
     }
 
-    public boolean wait(int seconds){
+    public boolean show(int seconds){
+        display();
         char dispenserReturn = getDispenser().waitEvent(seconds);
 
         if (dispenserReturn == '1')
@@ -96,6 +97,7 @@ public abstract class AbstractSelector {
     }
 
     public Object getPick(){
+        display();
         return doGetPickLoop();
     }
 

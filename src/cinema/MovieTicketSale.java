@@ -35,7 +35,7 @@ public final class MovieTicketSale extends Operation {
 
         }catch (IOException|ClassNotFoundException e){
             if (e instanceof InvalidClassException){
-                System.out.printf("state.dat file-format is obsolete%s", usingNewState);
+                System.out.printf("state.dat file is obsolete%s", usingNewState);
                 this.state = new MultiplexState();
             }else
                 throw new RuntimeException(e);
@@ -100,7 +100,6 @@ public final class MovieTicketSale extends Operation {
         builder.setCancelButton();
 
         MenuModeSelector theaterSelector = builder.build();
-        theaterSelector.display();
 
         return (Theater) theaterSelector.getPick();
     }
@@ -112,17 +111,18 @@ public final class MovieTicketSale extends Operation {
         MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
         builder.setOptionList(theater.getSessionList());
         builder.setTitle(language.getString("selectSession"));
-        String description = String.format("%s\n%s: %d %s.\n%s: %d€",
-                movie.getDescription(), language.getString("duration"),
-                movie.getDuration(), language.getString("minutes"),
-                language.getString("price"), theater.getPRICE());
+
+        String duration = TicketFormatter.getFormattedDuration(movie.getDuration(), language);
+        String pricing = TicketFormatter.getFormattedPricing(theater.getPRICE(), language);
+
+        String description = String.format("%s\n%s\n%s",
+                movie.getDescription(), duration, pricing);
 
         builder.setDescription(description);
         builder.setImage(theater.getMovie().getImage());
         builder.setCancelButton();
 
         MenuModeSelector sessionSelector = builder.build();
-        sessionSelector.display();
 
         return (Session) sessionSelector.getPick();
     }
@@ -137,7 +137,7 @@ public final class MovieTicketSale extends Operation {
 
         do{
             char dispenserReturn = getDispenser().waitEvent(30);
-            switch (dispenserReturn){//TODO IMPORTANTE: PARTIR TODOS LOS CASOS EN SUBMÉTODOS
+            switch (dispenserReturn){//TODO IMPORTANTE: PARTIR TODOS LOS CASOS EN SUB-MÉTODOS
 
                 case 0,'A' -> {//(timeout o cancel)
                     cancel = true; accept = false;

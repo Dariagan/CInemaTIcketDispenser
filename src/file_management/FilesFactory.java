@@ -38,7 +38,7 @@ public abstract class FilesFactory {
                     foundFiles.add(file);
                     System.out.println(fileName+" loaded");
                 }else {
-                    System.out.printf("%s was not loaded; doesn't match file-name format of %s",
+                    System.out.printf("%s was not loaded, doesn't match file-name format of %s",
                             fileName, getClass().getSimpleName());
                 }
             }
