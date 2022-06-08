@@ -55,7 +55,7 @@ public final class Theater implements Serializable, Comparable<Theater>{
     }
 
     public String toString() {
-        return movie.toString();
+        return String.format("%s, %d€", movie.toString(), this.getPRICE());
     }
 
     @Override

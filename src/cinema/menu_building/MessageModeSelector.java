@@ -45,6 +45,14 @@ public final class MessageModeSelector extends AbstractSelector {
         public MessageModeSelector build(){
             return new MessageModeSelector(this);
         }
+        @Override
+        public Builder reset(){
+            super.reset();
+            acceptsViaCreditCards = false;
+            hasAcceptButton = false;
+            acceptButtonKey = "accept";
+            return this;
+        }
     }
 
     @Override

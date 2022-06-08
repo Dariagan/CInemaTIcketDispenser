@@ -9,14 +9,21 @@ public abstract class AbstractSelector {
 
     private final CinemaTicketDispenser dispenser;
     private final Multiplex multiplex;
-    private final String TITLE;
-    private final String DESCRIPTION;
+    private String title;
+    private String description;
     private final boolean HAS_CANCEL_BUTTON;
     private final String cancelButtonKey;
 
+    String getTitle() {return title;}
+    String getDescription() {return description;}
 
-    String getTITLE() {return TITLE;}
-    String getDESCRIPTION() {return DESCRIPTION;}
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
     CinemaTicketDispenser getDispenser() {return dispenser;}
     Multiplex getMultiplex() {return multiplex;}
     boolean hasCancelButton() {return HAS_CANCEL_BUTTON;}
@@ -25,8 +32,8 @@ public abstract class AbstractSelector {
     AbstractSelector(Builder builder){
         this.dispenser = builder.dispenser;
         this.multiplex = builder.multiplex;
-        this.TITLE = builder.title;
-        this.DESCRIPTION = builder.description;
+        this.title = builder.title;
+        this.description = builder.description;
         this.HAS_CANCEL_BUTTON = builder.hasCancelButton;
         this.cancelButtonKey = builder.cancelButtonKey;
     }
@@ -64,12 +71,28 @@ public abstract class AbstractSelector {
             return this;
         }
         public abstract AbstractSelector build();
+        public Builder reset(){
+            this.title = "";
+            this.description = "";
+            this.hasCancelButton = false;
+            this.cancelButtonKey = "cancel";
+            return this;
+        }
     }
 
     public void display(){
         changeDispenserMode();
         displayTextAndExtra();
         displayOptionButtons();
+    }
+
+    public boolean wait(int seconds){
+        char dispenserReturn = getDispenser().waitEvent(seconds);
+
+        if (dispenserReturn == '1')
+            return dealWithUnwantedCard();
+        else
+            return true;
     }
 
     public Object getPick(){
@@ -100,18 +123,22 @@ public abstract class AbstractSelector {
 
     void endLoop(){continueLoop = false;}
 
-    void dealWithUnwantedCard(){
+    boolean dealWithUnwantedCard(){
         if (getMultiplex().getCreditCardManager().returnUnwantedCard()) {
             display();
+            return true;
         }
-        else endLoop();
+        else {
+            endLoop();
+            return false;
+        }
     }
 
     abstract void changeDispenserMode();
 
     private void displayTextAndExtra(){
-        dispenser.setTitle(TITLE);
-        dispenser.setDescription(DESCRIPTION);
+        dispenser.setTitle(title);
+        dispenser.setDescription(description);
         setExtra();
     }
     void setExtra(){}

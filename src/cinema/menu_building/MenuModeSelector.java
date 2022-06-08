@@ -9,18 +9,22 @@ import java.util.Locale;
 public final class MenuModeSelector extends AbstractSelector {
 
     private final ArrayList optionList;
-    private final String IMAGE;
-    final static int DISPENSER_OPTION_LIMIT = 6;
+    private String image;
+    private final static int DISPENSER_OPTION_LIMIT = 6;
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     private MenuModeSelector(Builder builder){
         super(builder);
         this.optionList = builder.optionList;
-        this.IMAGE = builder.image;
+        this.image = builder.image;
     }
 
     public final static class Builder extends AbstractSelector.Builder{
         private ArrayList optionList;
-        private String image;
+        private String image = null;
 
         public Builder(CinemaTicketDispenser dispenser, Multiplex multiplex){
             super(dispenser, multiplex);
@@ -29,7 +33,7 @@ public final class MenuModeSelector extends AbstractSelector {
             this.optionList = optionList;
             return this;
         }
-        public AbstractSelector.Builder setImage(String image){
+        public Builder setImage(String image){
             this.image = image;
             return this;
         }
@@ -42,6 +46,13 @@ public final class MenuModeSelector extends AbstractSelector {
             validate();
             return new MenuModeSelector(this);
         }
+        @Override
+        public Builder reset(){
+            super.reset();
+            optionList = null;
+            image = null;
+            return this;
+        }
     }
 
     @Override
@@ -51,7 +62,7 @@ public final class MenuModeSelector extends AbstractSelector {
 
     @Override
     void setExtra() {
-        getDispenser().setImage(IMAGE);
+        getDispenser().setImage(image);
     }
 
     @Override

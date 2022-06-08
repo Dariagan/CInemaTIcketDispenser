@@ -17,7 +17,9 @@ public final class MovieTicketSale extends Operation {
 
     public MovieTicketSale(CinemaTicketDispenser dispenser, Multiplex multi){
         super(dispenser, multi);
+
         String usingNewState = ", using new multiplex state.\n";
+
         try {
             if (deserializeMultiplexState()) {
                 if (state.getDate().isBefore(LocalDate.now())) {
@@ -38,6 +40,7 @@ public final class MovieTicketSale extends Operation {
             }else
                 throw new RuntimeException(e);
         }
+
         this.payment = new PerformPayment(dispenser, multi, state);
     }
 
@@ -70,7 +73,10 @@ public final class MovieTicketSale extends Operation {
         ArrayList<Seat> selectedSeats = selectSeats(selectedTheater, selectedSession);
         if(isNull(selectedSeats)) return false;
 
-        if (performPayment(selectedTheater, selectedSeats)){
+
+        boolean successfulPayment = performPayment(selectedTheater, selectedSession, selectedSeats);
+
+        if (successfulPayment){
             try{
                 serializeMultiplexState();
                 return true;
@@ -106,9 +112,10 @@ public final class MovieTicketSale extends Operation {
         MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
         builder.setOptionList(theater.getSessionList());
         builder.setTitle(language.getString("selectSession"));
-        String description = String.format("%s\n%s: %d %s",
+        String description = String.format("%s\n%s: %d %s.\n%s: %d€",
                 movie.getDescription(), language.getString("duration"),
-                movie.getDuration(), language.getString("minutes"));
+                movie.getDuration(), language.getString("minutes"),
+                language.getString("price"), theater.getPRICE());
 
         builder.setDescription(description);
         builder.setImage(theater.getMovie().getImage());
@@ -130,11 +137,11 @@ public final class MovieTicketSale extends Operation {
 
         do{
             char dispenserReturn = getDispenser().waitEvent(30);
-            switch (dispenserReturn){
+            switch (dispenserReturn){//TODO IMPORTANTE: PARTIR TODOS LOS CASOS EN SUBMÉTODOS
 
                 case 0,'A' -> {//(timeout o cancel)
                     cancel = true; accept = false;
-                    for (Seat seat:selectedSeats){
+                    for (Seat seat:selectedSeats){//todo hacer método
                         session.unoccupySeat(seat);
                         getDispenser().markSeat(seat.row(), seat.col(), Seat.State.UNOCCUPIED.ordinal());
                     }
@@ -215,9 +222,9 @@ public final class MovieTicketSale extends Operation {
         return new Seat(row, col);
     }
 
-    private boolean performPayment(Theater selectedTheater, ArrayList<Seat> selectedSeats) {
+    private boolean performPayment(Theater selectedTheater, Session selectedSession, ArrayList<Seat> selectedSeats) {
 
-        payment.setPurchase(selectedTheater, selectedSeats);
+        payment.setPurchase(selectedTheater, selectedSession, selectedSeats);
 
         return payment.doOperation();
     }
