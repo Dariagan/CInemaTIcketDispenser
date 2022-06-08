@@ -5,27 +5,27 @@ import java.util.ArrayList;
 
 public abstract class FilesFactory {
 
-    private String filesFolder;
-    private String fileExtension;
-    private String fileNameNoun;
+    private final String FILES_FOLDER;
+    private String FILE_EXTENSION;
+    private String FILENAME_NOUN;
 
-    String getFileExtension() {return fileExtension;}
-    String getFileNameNoun() {return fileNameNoun;}
+    String getFILE_EXTENSION() {return FILE_EXTENSION;}
+    String getFILENAME_NOUN() {return FILENAME_NOUN;}
 
     public FilesFactory(String filesFolder, String fileExtension) {
-        this.filesFolder = filesFolder;
-        this.fileExtension = fileExtension;
+        this.FILES_FOLDER = filesFolder;
+        this.FILE_EXTENSION = fileExtension;
     }
     public FilesFactory(String filesFolder, String fileExtension, String fileNameNoun) {
-        this.filesFolder = filesFolder;
-        this.fileExtension = fileExtension;
-        this.fileNameNoun = fileNameNoun;
+        this.FILES_FOLDER = filesFolder;
+        this.FILE_EXTENSION = fileExtension;
+        this.FILENAME_NOUN = fileNameNoun;
     }
 
 
     ArrayList<File> getMatchingFiles() {
 
-        String dirPath = System.getProperty("user.dir") + "\\data\\" + filesFolder;
+        String dirPath = System.getProperty("user.dir") + "\\data\\" + FILES_FOLDER;
         File dataFolder = new File(dirPath);
 
         File[] readFiles = dataFolder.listFiles();
@@ -34,7 +34,7 @@ public abstract class FilesFactory {
         if (readFiles != null) {
             for (File file : readFiles) {
                 String fileName = file.getName();
-                if (fileName.endsWith(fileExtension) && extraSelectionConditionIsMet(fileName)) {
+                if (fileName.endsWith(FILE_EXTENSION) && extraSelectionConditionIsMet(fileName)) {
                     foundFiles.add(file);
                     System.out.println(fileName+" loaded");
                 }else {

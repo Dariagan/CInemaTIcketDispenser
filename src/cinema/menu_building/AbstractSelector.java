@@ -9,20 +9,10 @@ public abstract class AbstractSelector {
 
     private final CinemaTicketDispenser dispenser;
     private final Multiplex multiplex;
-    private String title;
-    private String description;
+    private final String TITLE;
+    private final String DESCRIPTION;
     private final boolean HAS_CANCEL_BUTTON;
     private final String cancelButtonKey;
-
-    String getTitle() {return title;}
-    String getDescription() {return description;}
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     CinemaTicketDispenser getDispenser() {return dispenser;}
     Multiplex getMultiplex() {return multiplex;}
@@ -32,8 +22,8 @@ public abstract class AbstractSelector {
     AbstractSelector(Builder builder){
         this.dispenser = builder.dispenser;
         this.multiplex = builder.multiplex;
-        this.title = builder.title;
-        this.description = builder.description;
+        this.TITLE = builder.title;
+        this.DESCRIPTION = builder.description;
         this.HAS_CANCEL_BUTTON = builder.hasCancelButton;
         this.cancelButtonKey = builder.cancelButtonKey;
     }
@@ -64,10 +54,6 @@ public abstract class AbstractSelector {
         }
         public Builder setCancelButton(){
             this.hasCancelButton = true;
-            return this;
-        }
-        public Builder setCancelButtonKey(String key){
-            this.cancelButtonKey = key;
             return this;
         }
         public abstract AbstractSelector build();
@@ -139,8 +125,8 @@ public abstract class AbstractSelector {
     abstract void changeDispenserMode();
 
     private void displayTextAndExtra(){
-        dispenser.setTitle(title);
-        dispenser.setDescription(description);
+        dispenser.setTitle(TITLE);
+        dispenser.setDescription(DESCRIPTION);
         setExtra();
     }
     void setExtra(){}

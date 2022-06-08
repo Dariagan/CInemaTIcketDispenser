@@ -33,10 +33,6 @@ public final class MessageModeSelector extends AbstractSelector {
             this.acceptsViaCreditCards = false;
             return this;
         }
-        public Builder setAcceptButtonKey(String key){
-            this.acceptButtonKey = key;
-            return this;
-        }
         public Builder setAcceptViaCreditCard(){
             this.hasAcceptButton = false;
             this.acceptsViaCreditCards = true;

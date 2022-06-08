@@ -9,14 +9,12 @@ import static java.util.Objects.isNull;
 
 public final class MainMenu extends Operation{
     private final ArrayList<Operation> operationList = new ArrayList<>();
-    private LanguageSelection language;
-    private MovieTicketSale sale;
     private MenuModeSelector menuSelector;
 
     public MainMenu(CinemaTicketDispenser dispenser, Multiplex multi) {
         super(dispenser, multi);
-        this.language = new LanguageSelection(dispenser, multi);
-        this.sale = new MovieTicketSale(dispenser, multi);
+        LanguageSelection language = new LanguageSelection(dispenser, multi);
+        MovieTicketSale sale = new MovieTicketSale(dispenser, multi);
         operationList.add(language);
         operationList.add(sale);
     }

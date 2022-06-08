@@ -9,17 +9,13 @@ import java.util.Locale;
 public final class MenuModeSelector extends AbstractSelector {
 
     private final ArrayList optionList;
-    private String image;
+    private final String IMAGE;
     private final static int DISPENSER_OPTION_LIMIT = 6;
-
-    public void setImage(String image) {
-        this.image = image;
-    }
 
     private MenuModeSelector(Builder builder){
         super(builder);
         this.optionList = builder.optionList;
-        this.image = builder.image;
+        this.IMAGE = builder.image;
     }
 
     public final static class Builder extends AbstractSelector.Builder{
@@ -62,7 +58,7 @@ public final class MenuModeSelector extends AbstractSelector {
 
     @Override
     void setExtra() {
-        getDispenser().setImage(image);
+        getDispenser().setImage(IMAGE);
     }
 
     @Override
@@ -102,7 +98,6 @@ public final class MenuModeSelector extends AbstractSelector {
     }
 
     private Object getPickedListObject(char dispenserReturn){
-        //Boolean cancel = true;
 
         if(listElementWasPicked(dispenserReturn))
             return (optionList.get(dispenserReturnToListIndex(dispenserReturn)));

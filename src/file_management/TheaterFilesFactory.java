@@ -11,12 +11,12 @@ public final class TheaterFilesFactory extends FilesFactory{
 
     @Override
     boolean extraSelectionConditionIsMet(String fileName) {
-        String fileNameNoun = getFileNameNoun();
+        String fileNameNoun = getFILENAME_NOUN();
 
-        boolean isTheRightLength = fileName.length() == fileNameNoun.length() + 1 + getFileExtension().length();
+        boolean isTheRightLength = fileName.length() == fileNameNoun.length() + 1 + getFILE_EXTENSION().length();
         boolean startsWithRightNoun = fileName.startsWith(fileNameNoun);
         boolean hasAdequateNumber =
-        fileName.substring(fileNameNoun.length(), fileName.length() - getFileExtension().length()).matches("[1-4]");
+        fileName.substring(fileNameNoun.length(), fileName.length() - getFILE_EXTENSION().length()).matches("[1-4]");
 
         return isTheRightLength && startsWithRightNoun && hasAdequateNumber;
     }

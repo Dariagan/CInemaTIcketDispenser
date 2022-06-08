@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-public class TicketFormatter {//static
+public final class TicketFormatter {//static
 
     public static String getFormattedPurchase(Movie movie, ArrayList<Seat> seats, ResourceBundle language){
 

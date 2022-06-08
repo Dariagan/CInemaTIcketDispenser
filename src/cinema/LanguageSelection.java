@@ -10,7 +10,7 @@ import static java.util.Objects.isNull;
 
 public final class LanguageSelection extends Operation{
 
-    private ArrayList<Locale> locales = new ArrayList<>();
+    private final ArrayList<Locale> locales = new ArrayList<>();
 
     public LanguageSelection(CinemaTicketDispenser dispenser, Multiplex multi) {
         super(dispenser, multi);

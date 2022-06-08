@@ -19,7 +19,7 @@ public final class PerformPayment extends Operation{
     private int totalPrice;
     private final MultiplexState state;
     private ResourceBundle language;
-    MessageModeSelector.Builder builder = new MessageModeSelector.Builder(getDispenser(), getMultiplex());
+    private final MessageModeSelector.Builder builder = new MessageModeSelector.Builder(getDispenser(), getMultiplex());
 
     public PerformPayment(CinemaTicketDispenser dispenser, Multiplex multi, MultiplexState state) {
         super(dispenser, multi);

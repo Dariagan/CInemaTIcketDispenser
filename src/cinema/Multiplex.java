@@ -9,8 +9,8 @@ public final class Multiplex {
 
     private static final String RESOURCE_BUNDLE = "cinema.resource.resource";
     private ResourceBundle language = ResourceBundle.getBundle(RESOURCE_BUNDLE, new Locale("es","ES"));
-    private CinemaTicketDispenser dispenser = new CinemaTicketDispenser();
-    private CreditCardManager creditCardManager = new CreditCardManager(dispenser, this);
+    private final CinemaTicketDispenser dispenser = new CinemaTicketDispenser();
+    private final CreditCardManager creditCardManager = new CreditCardManager(dispenser, this);
 
     public CreditCardManager getCreditCardManager() {
         return creditCardManager;
@@ -33,5 +33,4 @@ public final class Multiplex {
     public void setLanguage(Locale locale){
         language = ResourceBundle.getBundle(RESOURCE_BUNDLE, locale);
     }
-
 }

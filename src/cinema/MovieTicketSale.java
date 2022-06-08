@@ -114,9 +114,7 @@ public final class MovieTicketSale extends Operation {
 
         String duration = TicketFormatter.getFormattedDuration(movie.getDuration(), language);
         String pricing = TicketFormatter.getFormattedPricing(theater.getPRICE(), language);
-
-        String description = String.format("%s\n%s\n%s",
-                movie.getDescription(), duration, pricing);
+        String description = String.format("%s\n%s\n%s", movie.getDescription(), duration, pricing);
 
         builder.setDescription(description);
         builder.setImage(theater.getMovie().getImage());
@@ -129,25 +127,19 @@ public final class MovieTicketSale extends Operation {
 
     private ArrayList<Seat> selectSeats(Theater theater, Session session){
 
-        presentSeats(theater, session);
-
         boolean cancel, accept;
 
         ArrayList<Seat> selectedSeats = new ArrayList<>();
 
+        presentSeats(theater, session);
         do{
             char dispenserReturn = getDispenser().waitEvent(30);
             switch (dispenserReturn){//TODO IMPORTANTE: PARTIR TODOS LOS CASOS EN SUB-MÉTODOS
 
-                case 0,'A' -> {//(timeout o cancel)
+                case 0,'A' -> {//(timeout o botón cancelar)
                     cancel = true; accept = false;
-                    for (Seat seat:selectedSeats){//todo hacer método
-                        session.unoccupySeat(seat);
-                        getDispenser().markSeat(seat.row(), seat.col(), Seat.State.UNOCCUPIED.ordinal());
-                    }
-                    selectedSeats.clear();
+                    unocuppyAllSelectedSeats(selectedSeats, session);
                 }
-
                 case '1' ->{//tarjeta introducida
                     if (getMultiplex().getCreditCardManager().returnUnwantedCard()){
                         cancel = false;
@@ -155,33 +147,45 @@ public final class MovieTicketSale extends Operation {
                     } else cancel = true; accept = false;
                 }
 
-                case 'B' -> {cancel = false; accept = true;}//"aceptar"
+                //botón aceptar
+                case 'B' -> {cancel = false; accept = true;}
 
+                //click en pantalla
                 default -> {
                     cancel = false; accept = false;
                     Seat pickedSeat = getSeatFromEncodedChar(dispenserReturn);
-                    if (selectedSeats.contains(pickedSeat)) {
-                        selectedSeats.remove(pickedSeat);
-                        session.unoccupySeat(pickedSeat);
-                        getDispenser().markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.UNOCCUPIED.ordinal());
-                    }
-                    else if (theater.hasSeat(pickedSeat)
-                            && !session.isOccupied(pickedSeat)
-                            && selectedSeats.size() < 4){
-                        selectedSeats.add(pickedSeat);
-                        session.occupySeat(pickedSeat);
-                        getDispenser().markSeat(pickedSeat.row(), pickedSeat.col(), Seat.State.SELECTED.ordinal());
-                    }
+
+                    if (selectedSeats.contains(pickedSeat))
+                        unocuppyReClickedSeat(pickedSeat, selectedSeats, session);
+
+                    else if (validPick(pickedSeat, theater, session, selectedSeats))
+                        occupySeat(pickedSeat, selectedSeats, session);
                 }
             }
-            if (!cancel && !selectedSeats.isEmpty()) getDispenser().setOption(1, language.getString("accept"));
-            else getDispenser().setOption(1, null);
+            if (!cancel && !selectedSeats.isEmpty())
+                getDispenser().setOption(1, language.getString("accept"));
+            else
+                getDispenser().setOption(1, null);
         }while(!(accept || cancel));
 
         if (accept){
             return selectedSeats;
         }
         else return null;
+    }
+
+    private void occupySeat(Seat seat, ArrayList<Seat> selectedSeats, Session session){
+        selectedSeats.add(seat);
+        session.occupySeat(seat);
+        getDispenser().markSeat(seat.row(), seat.col(), Seat.State.SELECTED.ordinal());
+    }
+
+    private boolean validPick(Seat pickedSeat, Theater theater, Session session, ArrayList<Seat> selectedSeats){
+        boolean isNotEmptySpace = theater.hasSeat(pickedSeat);
+        boolean isOccupied = session.isOccupied(pickedSeat);
+        boolean isBelowMaxNumOfSelectableSeats = selectedSeats.size() < 4;
+
+        return  isNotEmptySpace && !isOccupied && isBelowMaxNumOfSelectableSeats;
     }
 
     private void presentSeats(Theater theater, Session session){
@@ -210,6 +214,20 @@ public final class MovieTicketSale extends Operation {
             }
         }
     }
+    private void unocuppyAllSelectedSeats(ArrayList<Seat> selectedSeats, Session session){
+        for (Seat seat:selectedSeats)
+            unoccupySeat(seat, session);
+        selectedSeats.clear();
+    }
+    private void unocuppyReClickedSeat(Seat seat, ArrayList<Seat> selectedSeats, Session session){
+        unoccupySeat(seat, session);
+        selectedSeats.remove(seat);
+    }
+    private void unoccupySeat(Seat seat, Session session){
+        session.unoccupySeat(seat);
+        getDispenser().markSeat(seat.row(), seat.col(), Seat.State.UNOCCUPIED.ordinal());
+    }
+
 
     private int extractByte(char encodedChar, int offsetFromRight) {
         return ((1 << 8) - 1) & (encodedChar >> (offsetFromRight));
