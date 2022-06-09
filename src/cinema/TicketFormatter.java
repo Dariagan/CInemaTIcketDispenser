@@ -11,19 +11,23 @@ import java.util.ResourceBundle;
 
 public final class TicketFormatter {//static
 
+    /**
+     *
+     * @return
+     */
     public static String getFormattedPurchase(Movie movie, ArrayList<Seat> seats, ResourceBundle language){
 
-        String plural;
+        final String PLURAL;
 
         if (seats.size()>1)
-            plural = "s";
+            PLURAL = "s";
         else
-            plural = "";
+            PLURAL = "";
 
         Object[] messageArguments ={
                 seats.size(),
                 movie,
-                plural
+                PLURAL
         };
         MessageFormat purchases = new MessageFormat(language.getString("purchase"));
         purchases.setLocale(language.getLocale());
@@ -35,6 +39,10 @@ public final class TicketFormatter {//static
         return String.format("%s: %d€", language.getString("price"), price);
     }
 
+    /**
+     * @param language language to translate to
+     * @return formatted and localized date
+     */
     public static String getFormattedDate(LocalDate date, ResourceBundle language){
 
         Locale locale = language.getLocale();
@@ -46,17 +54,31 @@ public final class TicketFormatter {//static
         return String.format("%s: %s", language.getString("date"), locallyFormattedDate);
     }
 
+    /**
+     * @param duration duration in minutes
+     * @param language language to translate to
+     * @return formatted and localized duration
+     */
     public static String getFormattedDuration(int duration, ResourceBundle language){
 
         return String.format("%s: %s %s",
                 language.getString("duration"), duration, language.getString("minutes"));
     }
 
+    /**
+     * @param session selected session
+     * @param language language to translate to
+     * @return formatted session timing
+     */
     public static String getFormattedSession(Session session, ResourceBundle language){
 
         return String.format("%s: %s", language.getString("session"), session);
     }
 
+    /**
+     * @param language language to translate to
+     * @return formatted seat position to add to ticket
+     */
     public static String getFormattedSeating(Seat seat, ResourceBundle language){
 
         return String.format("%s:\n  %s %d\n  %s %d\n",
@@ -65,9 +87,15 @@ public final class TicketFormatter {//static
                 language.getString("column"), seat.col());
     }
 
-    public static String getFormattedTicketNumber(int i, int seats, ResourceBundle language){
+    /**
+     * @param seatNumber number of the seat referred to, respective to the purchase
+     * @param seats number of seats purchased
+     * @param language language to translate to
+     * @return formatted and localized ticket number respective to purchase
+     */
+    public static String getFormattedTicketNumber(int seatNumber, int seats, ResourceBundle language){
         Object[] numbers ={
-                i,
+                seatNumber,
                 seats
         };
         MessageFormat ticketNumberFormatter = new MessageFormat(language.getString("ticketNumber"));
@@ -76,8 +104,8 @@ public final class TicketFormatter {//static
     }
 
     public static String getRandomBarcode(){
-        StringBuilder builder = new StringBuilder("\n");
-        Random random = new Random();
+        final StringBuilder builder = new StringBuilder("\n");
+        final Random random = new Random();
 
         for (float i = 0; i < 22; i++) {
             int pick = random.nextInt(3);

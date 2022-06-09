@@ -10,36 +10,58 @@ import static java.util.Objects.isNull;
 
 public final class LanguageSelection extends Operation{
 
-    private final ArrayList<Locale> locales = new ArrayList<>();
+    private final ArrayList<LocaleAdapter> adaptedLocales = new ArrayList<>();
 
+    /**
+     * <p>Constructs itself calling the constructor from its parent class <code>Operation</code></p>
+     * <p>Creates and adapts all the wanted locales via the call of another method.</p>
+     */
     public LanguageSelection(CinemaTicketDispenser dispenser, Multiplex multi) {
         super(dispenser, multi);
-        Locale esLocale = new Locale("es", "ES");
-        locales.add(esLocale);
-        Locale enLocale = new Locale("en");
-        locales.add(enLocale);
-        Locale caLocale = new Locale("ca", "ES");
-        locales.add(caLocale);
-        Locale euLocale = new Locale("eu", "ES");
-        locales.add(euLocale);
+
+        createLocale("es", "ES");
+        createLocale("en");
+        createLocale("ca", "ES");
+        createLocale("eu", "ES");
     }
 
+    private void createLocale(String language){
+        Locale locale = new Locale(language);
+        adaptedLocales.add(new LocaleAdapter(locale));
+    }
+    private void createLocale(String language, String country){
+        Locale locale = new Locale(language, country);
+        adaptedLocales.add(new LocaleAdapter(locale));
+    }
+
+    /**
+     * <p>Creates a menu calling the <code>buildLanguageSelectionMenu</code> method.</p>
+     * <p>Displays it and gets customer's response by executing <code>menu.getPick().</code></p>
+     *
+     * @return <p>true if a language is selected</p>
+     * <p>false if the there's a timeout or the cancel button is pressed by the customer</p>
+     */
     @Override
     public boolean doOperation() {
 
-        MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
-        builder.setOptionList(locales);
-        builder.setTitle(this.toString()).setCancelButton();
+        MenuModeSelector menu = buildLanguageSelectionMenu();
 
-        MenuModeSelector sMenu = builder.build();
-
-        Locale pickedLocale = (Locale)sMenu.getPick();
-        if(!isNull(pickedLocale)){
-            getMultiplex().setLanguage(pickedLocale);
+        LocaleAdapter pickedLocaleAdapter = (LocaleAdapter)menu.getPick();
+        if(!isNull(pickedLocaleAdapter)){
+            getMultiplex().setLanguage(pickedLocaleAdapter.locale());
             return true;
         }
         else return false;
     }
+
+    private MenuModeSelector buildLanguageSelectionMenu(){
+
+        MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
+        builder.setOptionList(adaptedLocales);
+        builder.setTitle(this.toString()).setCancelButton();
+        return builder.build();
+    }
+
 
     public String toString(){
         return getMultiplex().getLanguage().getString("selectLanguage");

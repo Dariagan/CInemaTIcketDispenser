@@ -1,7 +1,6 @@
 package cinema;
 
 import file_management.MovieFile;
-
 import java.io.Serializable;
 
 public final class Movie implements Serializable, Comparable<Movie>{

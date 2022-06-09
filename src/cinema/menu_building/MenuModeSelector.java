@@ -64,15 +64,9 @@ public final class MenuModeSelector extends AbstractSelector {
     @Override
     void displayOptionButtons(){
 
-        for (int i = 0; i < optionList.size(); i++){
-            if (!(optionList.get(i) instanceof Locale locale))
-                getDispenser().setOption(i, optionList.get(i).toString());
-            else {
-                String language = locale.getDisplayLanguage(locale);
-                language = language.substring(0,1).toUpperCase() + language.substring(1);
-                getDispenser().setOption(i, language);
-            }
-        }
+        for (int i = 0; i < optionList.size(); i++)
+            getDispenser().setOption(i, optionList.get(i).toString());
+
         int nextIndex = optionList.size();
         if(super.hasCancelButton()){
             getDispenser().setOption(optionList.size(), getMultiplex().getLanguage().getString(getCancelButtonKey()));

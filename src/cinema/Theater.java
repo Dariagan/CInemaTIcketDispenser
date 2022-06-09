@@ -27,16 +27,13 @@ public final class Theater implements Serializable, Comparable<Theater>{
         loadSessions(movieFile);
     }
 
-    public ArrayList<Session> getSessionList() {
-        return sessionList;
-    }
-
     public int getNUMBER() {return NUMBER;}
     public int getPRICE() {return PRICE;}
     public Movie getMovie(){return movie;}
     public int getMaxRows() {return maxRows;}
     public int getMaxCols() {return maxCols;}
     public boolean hasSeat(Seat seat){return seatSet.contains(seat);}
+    public ArrayList<Session> getSessionList() {return sessionList;}
 
     private void loadSeats(TheaterFile theaterFile){
         int[] maxRows = {0};

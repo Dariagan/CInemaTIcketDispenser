@@ -5,6 +5,9 @@ import sienens.CinemaTicketDispenser;
 
 import static java.util.Objects.isNull;
 
+/**
+ *
+ */
 public abstract class AbstractSelector {
 
     private final CinemaTicketDispenser dispenser;
@@ -28,6 +31,9 @@ public abstract class AbstractSelector {
         this.cancelButtonKey = builder.cancelButtonKey;
     }
 
+    /**
+     *
+     */
     public abstract static class Builder {
         private final CinemaTicketDispenser dispenser;
         private final Multiplex multiplex;
@@ -66,12 +72,18 @@ public abstract class AbstractSelector {
         }
     }
 
+    /**
+     *
+     */
     private void display(){
         changeDispenserMode();
         displayTextAndExtra();
         displayOptionButtons();
     }
 
+    /**
+     *
+     */
     public boolean show(int seconds){
         display();
         char dispenserReturn = getDispenser().waitEvent(seconds);
@@ -82,11 +94,17 @@ public abstract class AbstractSelector {
             return true;
     }
 
+    /**
+     *
+     */
     public Object getPick(){
         display();
         return doGetPickLoop();
     }
 
+    /**
+     *
+     */
     private Object doGetPickLoop() {
         Object pick;
         continueLoop = true;
@@ -105,6 +123,11 @@ public abstract class AbstractSelector {
 
         return pick;
     }
+
+    /**
+     *
+     *
+     */
     abstract Object getIterationPick(char dispenserReturn);
 
     private boolean continueLoop;

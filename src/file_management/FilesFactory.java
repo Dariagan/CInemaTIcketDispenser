@@ -6,16 +6,22 @@ import java.util.ArrayList;
 public abstract class FilesFactory {
 
     private final String FILES_FOLDER;
-    private String FILE_EXTENSION;
+    private final String FILE_EXTENSION;
     private String FILENAME_NOUN;
 
-    String getFILE_EXTENSION() {return FILE_EXTENSION;}
-    String getFILENAME_NOUN() {return FILENAME_NOUN;}
+    String getFILE_EXTENSION() {
+        return FILE_EXTENSION;
+    }
+
+    String getFILENAME_NOUN() {
+        return FILENAME_NOUN;
+    }
 
     public FilesFactory(String filesFolder, String fileExtension) {
         this.FILES_FOLDER = filesFolder;
         this.FILE_EXTENSION = fileExtension;
     }
+
     public FilesFactory(String filesFolder, String fileExtension, String fileNameNoun) {
         this.FILES_FOLDER = filesFolder;
         this.FILE_EXTENSION = fileExtension;
@@ -36,19 +42,18 @@ public abstract class FilesFactory {
                 String fileName = file.getName();
                 if (fileName.endsWith(FILE_EXTENSION) && extraSelectionConditionIsMet(fileName)) {
                     foundFiles.add(file);
-                    System.out.println(fileName+" loaded");
-                }else {
-                    System.out.printf("%s was not loaded, doesn't match file-name format of %s",
+                    System.out.printf("%s %s\n", fileName, "loaded");
+                } else {
+                    System.out.printf("%s was not loaded, doesn't match file-name format of %s\n",
                             fileName, getClass().getSimpleName());
                 }
             }
-        }
-        else {
+        } else {
             String exceptionText = String.format("No files were found at %s", dirPath);
             throw new RuntimeException(exceptionText);
         }
         return foundFiles;
     }
 
-    boolean extraSelectionConditionIsMet(String fileName){return true;}
+    abstract boolean extraSelectionConditionIsMet(String fileName);
 }

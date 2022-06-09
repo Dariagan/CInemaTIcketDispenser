@@ -9,6 +9,11 @@ public final class AssociateFilesFactory extends FilesFactory{
         super("associates", ".txt");
     }
 
+    @Override
+    boolean extraSelectionConditionIsMet(String fileName) {
+        return true;
+    }
+
     public ArrayList<AssociateFile> getFiles() {
         ArrayList<AssociateFile> selectedFiles = new ArrayList<>();
 

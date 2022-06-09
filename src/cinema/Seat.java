@@ -14,11 +14,11 @@ public record Seat(int row, int col) implements Serializable, Comparable<Seat> {
     @Override
     public int compareTo(Seat o) {
 
-        int rowComparison = Integer.compare(this.row, o.row);
+        final int ROW_COMPARISON = Integer.compare(this.row, o.row);
 
-        if (rowComparison == 0)
+        if (ROW_COMPARISON == 0)
             return Integer.compare(this.col, o.col);
         else
-            return rowComparison;
+            return ROW_COMPARISON;
     }
 }

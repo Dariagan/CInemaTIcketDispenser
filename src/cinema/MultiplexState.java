@@ -1,7 +1,6 @@
 package cinema;
 
 import file_management.*;
-
 import java.io.*;
 import java.time.LocalDate;
 import java.util.*;

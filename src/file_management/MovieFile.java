@@ -107,7 +107,7 @@ public final class MovieFile extends File implements Comparable<File>{
 
             while (!isNull(line = br.readLine())) {
                 line = line.trim();
-                if (!line.isBlank()) {
+                if (!line.isBlank())
                     switch (searchedField){
                         case THEATER_NUMBER, TITLE, SESSIONS, DURATION, POSTER, PRICE->{
                             if (line.startsWith(searchedField.toString())){
@@ -118,8 +118,8 @@ public final class MovieFile extends File implements Comparable<File>{
                             if (isDescription(line))
                                 return line;
                         }
+                        default -> throw new RuntimeException("Passed searchedField not implemented.");
                     }
-                }
             }
             br.close();
             fr.close();
@@ -134,6 +134,6 @@ public final class MovieFile extends File implements Comparable<File>{
         if (o instanceof MovieFile){
             return Integer.compare(this.getTheaterNumber(),((MovieFile) o).getTheaterNumber());
         }
-        else throw new RuntimeException("should not be compared");
+        else throw new RuntimeException("Should not be compared");
     }
 }

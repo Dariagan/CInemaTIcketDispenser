@@ -14,11 +14,22 @@ public final class TheaterFilesFactory extends FilesFactory{
         String fileNameNoun = getFILENAME_NOUN();
 
         boolean isTheRightLength = fileName.length() == fileNameNoun.length() + 1 + getFILE_EXTENSION().length();
+
+        if (!isTheRightLength)
+            return false;
+
         boolean startsWithRightNoun = fileName.startsWith(fileNameNoun);
+
+        if (!startsWithRightNoun)
+            return false;
+
         boolean hasAdequateNumber =
         fileName.substring(fileNameNoun.length(), fileName.length() - getFILE_EXTENSION().length()).matches("[1-4]");
 
-        return isTheRightLength && startsWithRightNoun && hasAdequateNumber;
+        if (!hasAdequateNumber)
+            return false;
+
+        return true;
     }
 
     public ArrayList<TheaterFile> getFiles(){

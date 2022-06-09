@@ -4,12 +4,15 @@ import sienens.CinemaTicketDispenser;
 
 import java.io.Serializable;
 
-public final class CreditCardManager extends Operation implements Serializable {
+public final class CardReturner extends Operation implements Serializable {
 
-    public CreditCardManager(CinemaTicketDispenser dispenser, Multiplex multiplex) {
+    public CardReturner(CinemaTicketDispenser dispenser, Multiplex multiplex) {
         super(dispenser, multiplex);
     }
 
+    /**
+     * @return true if the customer recovered his card, false if not
+     */
     @Override
     public boolean doOperation() {
         return returnUnwantedCard();
@@ -20,14 +23,19 @@ public final class CreditCardManager extends Operation implements Serializable {
         return "Credit card manager";
     }
 
+    /**
+     * @return true if the customer recovered his card, false if not
+     */
     public boolean returnUnwantedCard() {
 
-        getDispenser().setMessageMode();
         getDispenser().setTitle(getMultiplex().getLanguage().getString("unwantedCard"));
 
         return returnCreditCard();
     }
 
+    /**
+     * @return true if the customer recovered his card, false if not
+     */
     public boolean returnCreditCard(){
         getDispenser().setMessageMode();
         getDispenser().setOption(0, null);

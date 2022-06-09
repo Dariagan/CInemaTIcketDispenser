@@ -19,13 +19,20 @@ public final class MainMenu extends Operation{
         operationList.add(sale);
     }
 
+    /**
+     * <p>Handles the option selection for the main menu and executes the operation the customer picked in the main menu.</p>
+     * <p>Displays the menu when <code>menuSelector.getPick()</code> is executed internally.</p>
+     * <p>If the picked operation returns a false (meaning a timeout or a cancel button being pressed), the language is
+     * restored to the default: Spanish.</p>
+     * @return nothing because it loops indefinitely.
+     */
     @Override
     public boolean doOperation() {
 
         Operation pickedOperation;
         boolean pickedAnOption;
         do {
-            presentMenu();
+            createMenu();
             pickedOperation = (Operation) menuSelector.getPick();
             pickedAnOption = !isNull(pickedOperation);
             if(pickedAnOption)
@@ -40,7 +47,11 @@ public final class MainMenu extends Operation{
         return getMultiplex().getLanguage().getString("selectOption");
     }
 
-    public void presentMenu(){
+    /**
+     * Internally builds the main menu utilizing a builder from the <code>MenuModeSelector</code> class, and
+     * sets this class's attribute <code>menuSelector</code> to the built result.
+     */
+    public void createMenu(){
         MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
         builder.setOptionList(operationList);
         builder.setTitle(this.toString());

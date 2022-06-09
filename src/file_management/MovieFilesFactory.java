@@ -10,6 +10,11 @@ public final class MovieFilesFactory extends FilesFactory{
         super("movies", ".txt");
     }
 
+    @Override
+    boolean extraSelectionConditionIsMet(String fileName) {
+        return true;
+    }
+
     public ArrayList<MovieFile> getFiles() {
 
         ArrayList<MovieFile> movieFiles = new ArrayList<>();
