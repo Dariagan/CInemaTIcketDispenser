@@ -72,7 +72,8 @@ public final class MessageModeSelector extends AbstractSelector {
                 case 'A' -> accepted = false;
                 default -> throw new RuntimeException();
             }
-        else throw new RuntimeException();
+        else
+            throw new RuntimeException();
 
         return accepted;
     }

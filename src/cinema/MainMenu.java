@@ -24,7 +24,7 @@ public final class MainMenu extends Operation{
      * <p>Displays the menu when <code>menuSelector.getPick()</code> is executed internally.</p>
      * <p>If the picked operation returns a false (meaning a timeout or a cancel button being pressed), the language is
      * restored to the default: Spanish.</p>
-     * @return nothing because it loops indefinitely.
+     * @return nothing because it loops indefinitely
      */
     @Override
     public boolean doOperation() {

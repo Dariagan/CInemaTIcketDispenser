@@ -13,7 +13,7 @@ public final class MultiplexState implements Serializable {
     private final HashSet<Long> allAssociates = new HashSet<>();
 
     public static String getFileName() {return STATE_FILE_NAME;}
-    public LocalDate getDate() {return creationDate;}
+    public LocalDate getCreationDate() {return creationDate;}
     public ArrayList<Theater> getTheaters() {return theaters;}
 
     public boolean cardHasDiscount(Long card) {
@@ -33,7 +33,7 @@ public final class MultiplexState implements Serializable {
         Collections.sort(theaters);
     }
 
-    private void loadCreditCards(){
+    private void loadAssociatesCreditCards(){
         AssociateFilesFactory aFactory = new AssociateFilesFactory();
 
         for (AssociateFile associateFile: aFactory.getFiles()){
@@ -44,7 +44,7 @@ public final class MultiplexState implements Serializable {
     public MultiplexState() {
 
         loadCinemaFiles();
-        loadCreditCards();
+        loadAssociatesCreditCards();
         creationDate = LocalDate.now();
     }
 }

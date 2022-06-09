@@ -12,8 +12,10 @@ import java.util.ResourceBundle;
 public final class TicketFormatter {//static
 
     /**
-     *
-     * @return
+     * @param movie movie from which to get the title
+     * @param seats list of seats which were selected previously
+     * @param language language to translate to
+     * @return Formatted header for purchase
      */
     public static String getFormattedPurchase(Movie movie, ArrayList<Seat> seats, ResourceBundle language){
 
@@ -112,7 +114,7 @@ public final class TicketFormatter {//static
             switch (pick) {
                 case 0-> {builder.append("❘"); i-=0.9;}
                 case 1-> builder.append("❙");
-                case 2-> {builder.append("❚"); i+=0.3;}
+                case 2-> {builder.append("❚"); i+=0.2;}
             }
         }
         return builder.toString();

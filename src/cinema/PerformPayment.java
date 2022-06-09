@@ -63,7 +63,8 @@ public final class PerformPayment extends Operation{
 
     /**
      * <p>Handles flow of the ticket purchase from the point on when the communication with the bank is established.</p>
-     * <p>Returns to the customer his previously inserted credit card if he can't cover the purchase with his balance.</p>
+     * <p>Returns to the customer his previously inserted credit card if he can't cover the purchase with his balance, or,
+     * if he completed the purchase successfully.</p>
      * @throws CommunicationException if the communication with the bank is interrupted
      * @return <p>true if the purchase has been completed successfully</p>
      *         <p>false if not</p>

@@ -32,7 +32,7 @@ public final class MovieTicketSale extends Operation {
         String usingNewState = ", using new multiplex state.\n";
         try {
             if (deserializeMultiplexState()) {
-                if (state.getDate().isBefore(LocalDate.now())) {
+                if (state.getCreationDate().isBefore(LocalDate.now())) {
                     System.out.printf("state.dat is from yesterday or older%s", usingNewState);
                     this.state = new MultiplexState();
                 }else{
@@ -73,6 +73,18 @@ public final class MovieTicketSale extends Operation {
             return false;
     }
 
+    /**
+     * Handles the general flow of the sale
+     * @return <p><code>true</code> if the sale was completed successfully in the method <code>performPayment</code>.</p>
+     *         <p><code>false</code>if:
+     *         <ul>
+     *             <li>no movie (theater) was selected by the customer</li>
+     *             <li>no session was selected by the customer</li>
+     *             <li>no seat was selected by the customer</li>
+     *             <li><code>performPayment<code>'s call returns false</li>
+     *         </ul>
+     *         </p>
+     */
     public boolean doOperation(){
 
         language = getMultiplex().getLanguage();
@@ -106,6 +118,12 @@ public final class MovieTicketSale extends Operation {
         }
     }
 
+    /**
+     * Builds a selector menu via <code>MenuModeSelector.Builder</code>, which handles its display and events.
+     * Presents on the dispenser screen the list of available movies to select when calling
+     * <code>theaterSelector.getPick()</code>.
+     * @return the theater corresponding to the selected movie, or null if no movie was selected.
+     */
     private Theater selectTheater(){
 
         MenuModeSelector.Builder builder = new MenuModeSelector.Builder(getDispenser(), getMultiplex());
@@ -119,6 +137,11 @@ public final class MovieTicketSale extends Operation {
         return (Theater) theaterSelector.getPick();
     }
 
+    /**
+     *
+     * @param theater movie (theater) selected by the customer
+     * @return session which was selected by the customer, or null if no session was selected.
+     */
     private Session selectSession(Theater theater){
 
         Movie movie = theater.getMovie();
@@ -132,7 +155,7 @@ public final class MovieTicketSale extends Operation {
         String description = String.format("%s\n%s\n%s", movie.getDescription(), duration, pricing);
 
         builder.setDescription(description);
-        builder.setImage(theater.getMovie().getImage());
+        builder.setImage(movie.getImage());
         builder.setCancelButton();
 
         MenuModeSelector sessionSelector = builder.build();
@@ -141,10 +164,10 @@ public final class MovieTicketSale extends Operation {
     }
 
     /**
-     *
-     * @param theater
-     * @param session
-     * @return
+     * Handles the flow accordingly to the obtained customer input after presenting to him the theater onscreen.
+     * @param theater theater which was previously selected, contains the set of existent seats.
+     * @param session session which was previously selected, contains the set of already occupied seats.
+     * @return list of seats selected from the dispenser screen
      */
     private ArrayList<Seat> selectSeats(Theater theater, Session session){
 
@@ -169,6 +192,7 @@ public final class MovieTicketSale extends Operation {
                 }
                 //botón aceptar
                 case 'B' -> {cancel = false; accept = true;}
+
                 //click en asiento
                 default -> {
                     cancel = false; accept = false;
@@ -227,7 +251,7 @@ public final class MovieTicketSale extends Operation {
     /**
      *  Handles a click on a seat from the displayed theater in the screen,
      *  accordingly to its state (selected, occupied, not a seat).
-     * @param encodedDispenserReturn encoded char returned from the dispenser when a seat on the screen is clicked on
+     * @param encodedDispenserReturn encoded char returned from the dispenser when a seat on the dispenser screen is clicked on
      * @param theater currently shown theater
      * @param selectedSeats currently selected seats
      * @param session currently shown session
@@ -245,12 +269,24 @@ public final class MovieTicketSale extends Operation {
 
     private final int MAX_PURCHASABLE_SEATS = 4;
 
+    /**
+     * Checks whether the (previously unselected) selected seat is valid for occupation, or not.
+     * @param pickedSeat clicked seat
+     * @param theater currently displayed theater
+     * @param selectedSeats contains the currently selected seats by the customer
+     * @param session contains the state of the displayed theater's seats
+     * @return <p>true if the seat is not an empty space, isn't occupied by someone else,
+     * and if the maximum number of selected seats is not surpassed.</p>
+     * <p>false if otherwise.</p>
+     */
     private boolean validPick(Seat pickedSeat, Theater theater, ArrayList<Seat> selectedSeats , Session session){
         boolean isNotEmptySpace = theater.hasSeat(pickedSeat);
+
         boolean isOccupied = session.isOccupied(pickedSeat);
+
         boolean isBelowMaxNumOfSelectableSeats = selectedSeats.size() < MAX_PURCHASABLE_SEATS;
 
-        return  isNotEmptySpace && !isOccupied && isBelowMaxNumOfSelectableSeats;
+        return isNotEmptySpace && !isOccupied && isBelowMaxNumOfSelectableSeats;
     }
     private void occupySeat(Seat seat, ArrayList<Seat> selectedSeats, Session session){
         selectedSeats.add(seat);
