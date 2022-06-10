@@ -93,7 +93,7 @@ public final class TicketFormatter {
      * @param seatNumber number of the seat referred to, respective to the purchase
      * @param seats number of seats purchased
      * @param language language to translate to
-     * @return formatted and localized ticket number respective to purchase
+     * @return formatted and localized ticket number relative to purchase
      */
     public static String getFormattedTicketNumber(int seatNumber, int seats, ResourceBundle language){
         Object[] numbers ={

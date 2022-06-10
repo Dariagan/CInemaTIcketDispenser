@@ -16,12 +16,14 @@ public final class TheaterFile extends File {
 
     public int getTheaterNumber(){
 
-        String theaterFileName = this.getName();
+        String fileName = this.getName();
 
-        if (theaterFileName.startsWith("Theater")) {
-            return Character.getNumericValue(theaterFileName.charAt("Theater".length()));
+        final String THEATER_FILE_NAME = "Theater";
+
+        if (fileName.startsWith(THEATER_FILE_NAME)) {
+            return Character.getNumericValue(fileName.charAt(THEATER_FILE_NAME.length()));
         }
-        else throw new RuntimeException("Theater file name " + theaterFileName + " not recognized.");
+        else throw new RuntimeException("Theater file name " + fileName + " not recognized.");
     }
 
     public TreeSet<Seat> getSeats (TheaterFile file, int[] maxRows, int[] maxCols){

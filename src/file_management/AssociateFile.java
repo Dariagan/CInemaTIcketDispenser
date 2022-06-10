@@ -12,6 +12,12 @@ public final class AssociateFile extends File {
         super(file.getAbsolutePath());
     }
 
+    /**
+     * Gets all the associates' credit card numbers in the file by removing all the spaces in each of the read lines of
+     * the file and then parsing it into <code>Long</code>, which is then added to the <code>HashSet</code> of
+     * <code>Long</code> to be returned.
+     * @return set containing all the found credit card numbers
+     */
     public HashSet<Long> getAssociates(){
 
         try {

@@ -16,7 +16,7 @@ public final class CardReturner extends Operation implements Serializable {
      */
     @Override
     public boolean doOperation() {
-        return returnUnwantedCard();
+        return returnCreditCard();
     }
 
     @Override
@@ -25,7 +25,9 @@ public final class CardReturner extends Operation implements Serializable {
     }
 
     /**
-     * @return <p><code>true</code> if the customer recovered his card</p>
+     * Displays a localized title on the dispenser which says that the customer's credit card is not wanted, and calls
+     * <code>returnCreditCard()</code> to eject it, and to display a description which says to pick it up.
+     * @return <p><code>true</code> if the customer recovered his card before <code>returnCreditCard()</code>'s timeout</p>
      *         <p><code>false</code> if not</p>
      */
     public boolean returnUnwantedCard() {
@@ -34,9 +36,10 @@ public final class CardReturner extends Operation implements Serializable {
 
         return returnCreditCard();
     }
-
     /**
-     * @return <p><code>true</code> if the customer recovered his card</p>
+     * Ejects the customer's credit card and displays a localized description on the dispenser which says to pick it up.
+     * If the customer didn't recover it after thirty seconds, the card is indefinitely retained inside the machine.
+     * @return <p><code>true</code> if the customer recovered his card before the timeout</p>
      *         <p><code>false</code> if not</p>
      */
     public boolean returnCreditCard(){

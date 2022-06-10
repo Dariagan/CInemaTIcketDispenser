@@ -29,11 +29,11 @@ public abstract class FilesFactory {
     }
 
     /**
-     * Returns a list of files whose file extension is the same as the factory's established, and also which meet the
+     * Returns a list of files whose file extension is the same as the factory's established, and which meet the
      * criteria established by the sub-factory' implementation of the
      * <code>extraSelectionConditionIsMet(String fileName)</code> method.
      *
-     * @return positively selected files
+     * @return list of files which match the file extension, and the sub-factory's selection condition
      */
     ArrayList<File> getMatchingFiles() {
 

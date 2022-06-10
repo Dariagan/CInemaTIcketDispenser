@@ -49,18 +49,24 @@ public final class MovieFile extends File implements Comparable<File>{
     public ArrayList<LocalTime> getSessionsTimes(){
         return collectSessionsTimes(getRawDataSubString(Field.SESSIONS));
     }
-    public ArrayList<LocalTime> collectSessionsTimes(String rawDataLine){
+
+    /**
+     *
+     * @param rawDataSubString substring of the <code>Sessions</code> line without the field name, colon, and adjacent space.
+     * @return list of all the read session times
+     */
+    private ArrayList<LocalTime> collectSessionsTimes(String rawDataSubString){
 
         ArrayList<LocalTime> foundSessionsTimes = new ArrayList<>();
 
-        int nSessions = (rawDataLine.length()+1)/6;
+        int nSessions = (rawDataSubString.length()+1)/6;
 
         for (int i = 0; i < nSessions; i++) {
             int offset = i*6;
 
-            if (rawDataLine.substring(offset, 5 + offset).matches(TIME_FORMAT)) {
-                int hour = Integer.parseInt(rawDataLine.substring(offset, offset + 2));
-                int minute = Integer.parseInt(rawDataLine.substring(offset + 3, offset + 5));
+            if (rawDataSubString.substring(offset, 5 + offset).matches(TIME_FORMAT)) {
+                int hour = Integer.parseInt(rawDataSubString.substring(offset, offset + 2));
+                int minute = Integer.parseInt(rawDataSubString.substring(offset + 3, offset + 5));
 
                 LocalTime sessionTime = LocalTime.of(hour, minute);
 
@@ -70,17 +76,22 @@ public final class MovieFile extends File implements Comparable<File>{
         return foundSessionsTimes;
     }
 
-    private int computeMovieDuration(String rawDataLine) {
+    /**
+     *
+     * @param rawDataSubString substring of the <code>Sessions</code> line without the field name, colon, and adjacent space.
+     * @return time difference in minutes between the first two session times of the <code>Sessions</code> line
+     */
+    private int computeMovieDuration(String rawDataSubString) {
 
-        if (rawDataLine.substring(0, 5).matches(TIME_FORMAT)
-                && rawDataLine.substring(6, 11).matches(TIME_FORMAT)){
-            int startHour = Integer.parseInt(rawDataLine.substring(0,2));
-            int startMinute = Integer.parseInt(rawDataLine.substring(3,5));
+        if (rawDataSubString.substring(0, 5).matches(TIME_FORMAT)
+                && rawDataSubString.substring(6, 11).matches(TIME_FORMAT)){
+            int startHour = Integer.parseInt(rawDataSubString.substring(0,2));
+            int startMinute = Integer.parseInt(rawDataSubString.substring(3,5));
 
             LocalTime startTime = LocalTime.of(startHour, startMinute);
 
-            int endHour = Integer.parseInt(rawDataLine.substring(6,8));
-            int endMinute = Integer.parseInt(rawDataLine.substring(9,11));
+            int endHour = Integer.parseInt(rawDataSubString.substring(6,8));
+            int endMinute = Integer.parseInt(rawDataSubString.substring(9,11));
 
             LocalTime endTime = LocalTime.of(endHour, endMinute);
 
@@ -98,7 +109,16 @@ public final class MovieFile extends File implements Comparable<File>{
                 && !line.startsWith(Field.PRICE.toString());
     }
 
-    private String getRawDataSubString(Field searchedField) {
+    /**
+     * Searches inside the file for a line whose start matches the passed field's <code>toString()</code> method return.
+     * When the line is found, the sub<code>String</code> of the line after "<code>field_name: </code>" is returned.
+     * In the case of the movie description, since it has no field name, the whole line is returned.
+     *
+     * @param field searched field
+     * @return a sub<code>String</code> of a file line, which excludes the searched field's <code>toString()</code>
+     * method return.
+     */
+    private String getRawDataSubString(Field field) {
         String movieFilePath = this.getAbsolutePath();
         try {
             java.io.FileReader fr = new java.io.FileReader(movieFilePath);
@@ -108,17 +128,17 @@ public final class MovieFile extends File implements Comparable<File>{
             while (!isNull(line = br.readLine())) {
                 line = line.trim();
                 if (!line.isBlank())
-                    switch (searchedField){
+                    switch (field){
                         case THEATER_NUMBER, TITLE, SESSIONS, DURATION, POSTER, PRICE->{
-                            if (line.startsWith(searchedField.toString())){
-                                return line.substring(searchedField.toString().length());
+                            if (line.startsWith(field.toString())){
+                                return line.substring(field.toString().length());
                             }
                         }
                         case DESCRIPTION->{
                             if (isDescription(line))
                                 return line;
                         }
-                        default -> throw new RuntimeException("Passed searchedField not implemented.");
+                        default -> throw new RuntimeException("Passed field not implemented.");
                     }
             }
             br.close();
@@ -126,7 +146,7 @@ public final class MovieFile extends File implements Comparable<File>{
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        throw new RuntimeException(searchedField.toString()+" not found in "+movieFilePath);
+        throw new RuntimeException(field.toString()+" not found in "+movieFilePath);
     }
 
     @Override

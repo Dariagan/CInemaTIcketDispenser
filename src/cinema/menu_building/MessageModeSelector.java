@@ -23,7 +23,7 @@ public final class MessageModeSelector extends AbstractSelector {
     }
 
     /**
-     * This inner class's purpose is to modularly construct the attributes of the class it is contained in.
+     * This inner class's purpose is to modularly construct each attribute of the class it is contained in.
      */
     public final static class Builder extends AbstractSelector.Builder{
 
@@ -64,7 +64,10 @@ public final class MessageModeSelector extends AbstractSelector {
     /**
      * gets the instance of <code>Object</code> corresponding to the customer's response
      * @param dispenserReturn char returned from <code>CinemaTicketDispenser</code>'s <code>waitEvent(int seconds)</code> method
-     * @return instantiated <code>Boolean</code>, or <code>null</code>.
+     * @return <p><code>true Boolean</code> if customer accepts (can be via credit card)</p>
+     *         <p><code>false Boolean</code> if customer presses the cancel button</p>
+     *         <p><code>null</code> if a credit card is inserted with the <code>MessageModeSelector</code>
+     *         being set to accept with a button</p>
      */
     @Override
     public Object getIterationPick(char dispenserReturn){

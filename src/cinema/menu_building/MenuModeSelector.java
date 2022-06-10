@@ -17,7 +17,7 @@ public final class MenuModeSelector extends AbstractSelector {
     }
 
     /**
-     * This inner class's purpose is to modularly construct the attributes of the class it is contained in.
+     * This inner class's purpose is to modularly construct each attribute of the class it is contained in.
      */
     public final static class Builder extends AbstractSelector.Builder{
         private ArrayList optionList;
@@ -62,7 +62,7 @@ public final class MenuModeSelector extends AbstractSelector {
     }
 
     @Override
-    void setExtra() {
+    void displayExtra() {
         getDispenser().setImage(IMAGE);
     }
 

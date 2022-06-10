@@ -15,6 +15,11 @@ public final class MovieFilesFactory extends FilesFactory{
         return true;
     }
 
+    /**
+     * Gets all the matching files from the parent factory's <code>getMatchingFiles()</code> method, and constructs an
+     * instance of <code>MovieFile</code> for each file said method returned.
+     * @return list of movie files which have the correct file extension
+     */
     public ArrayList<MovieFile> getFiles() {
 
         ArrayList<MovieFile> movieFiles = new ArrayList<>();

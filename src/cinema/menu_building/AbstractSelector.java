@@ -6,7 +6,7 @@ import sienens.CinemaTicketDispenser;
 import static java.util.Objects.isNull;
 
 /**
- *
+ * Abstract class designed for the inheritance of the common attributes and methods among the selectors.
  */
 public abstract class AbstractSelector {
 
@@ -31,7 +31,7 @@ public abstract class AbstractSelector {
     }
 
     /**
-     * This inner class's purpose is to modularly construct the attributes of the class it is contained in.
+     * This inner class's purpose is to modularly construct each attribute of the class it is contained in.
      */
     public abstract static class Builder {
         private final CinemaTicketDispenser dispenser;
@@ -90,9 +90,6 @@ public abstract class AbstractSelector {
             return true;
     }
 
-    /**
-     *
-     */
     public Object getPick(){
         display();
         return doGetPickLoop();
@@ -152,9 +149,13 @@ public abstract class AbstractSelector {
     private void displayTextAndExtra(){
         dispenser.setTitle(TITLE);
         dispenser.setDescription(DESCRIPTION);
-        setExtra();
+        displayExtra();
     }
-    void setExtra(){}
+
+    /**
+     * Meant to be optionally overridden by the subclass if needed, but it's not required.
+     */
+    void displayExtra(){}
 
     abstract void displayOptionButtons();
 

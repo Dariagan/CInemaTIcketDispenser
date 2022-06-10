@@ -20,6 +20,10 @@ public final class MultiplexState implements Serializable {
         return allAssociates.contains(card);
     }
 
+    /**
+     * Instantiates a theater files factory, and a movie files factory, and extracts the files from both factories
+     * to construct the theaters with their movie.
+     */
     private void loadCinemaFiles(){
         TheaterFilesFactory tFactory = new TheaterFilesFactory();
         MovieFilesFactory mFactory = new MovieFilesFactory();
@@ -33,6 +37,10 @@ public final class MultiplexState implements Serializable {
         Collections.sort(theaters);
     }
 
+    /**
+     * Instantiates an associates files factory, and from each gotten file from it, it adds all the read numbers
+     * to this multiplex state's own set of associate credit card numbers.
+     */
     private void loadAssociatesCreditCards(){
         AssociateFilesFactory aFactory = new AssociateFilesFactory();
 

@@ -14,6 +14,11 @@ public final class AssociateFilesFactory extends FilesFactory{
         return true;
     }
 
+    /**
+     * Gets all the matching files from the parent factory's <code>getMatchingFiles()</code> method, and constructs an
+     * instance of <code>AssociateFile</code> for each file said method returned.
+     * @return list of associate files which have the correct file extension
+     */
     public ArrayList<AssociateFile> getFiles() {
         ArrayList<AssociateFile> selectedFiles = new ArrayList<>();
 
