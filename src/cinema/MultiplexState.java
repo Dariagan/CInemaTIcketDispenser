@@ -27,7 +27,7 @@ public final class MultiplexState implements Serializable {
         ArrayList<MovieFile> movieFiles = mFactory.getFiles();
 
         for (TheaterFile theaterFile : tFactory.getFiles()){
-            theaters.add(new Theater(theaterFile, movieFiles.get(theaterFile.getTheaterNumber()-1)));
+            theaters.add(new Theater(theaterFile, movieFiles.get(theaterFile.getTheaterNumber() - 1)));
         }
 
         Collections.sort(theaters);

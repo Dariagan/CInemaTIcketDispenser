@@ -19,15 +19,16 @@ public final class MovieTicketSale extends Operation {
     public MovieTicketSale(CinemaTicketDispenser dispenser, Multiplex multi){
         super(dispenser, multi);
 
-       instanceState();
+       instantiateState();
 
        this.payment = new PerformPayment(dispenser, multi, state);
     }
 
     /**
-     *
+     * Instantiates the attribute <code>state</code> from this class, accordingly to the state of the "state.dat" file in
+     * the project directory.
      */
-    private void instanceState(){
+    private void instantiateState(){
 
         String usingNewState = ", using new multiplex state.\n";
         try {
@@ -52,6 +53,10 @@ public final class MovieTicketSale extends Operation {
         }
     }
 
+    /**
+     * Saves the current multiplex state in a file called "state.dat" in the project directory.
+     * @throws IOException
+     */
     public void serializeMultiplexState() throws IOException {
         FileOutputStream fOut = new FileOutputStream(MultiplexState.getFileName());
         ObjectOutputStream out = new ObjectOutputStream(fOut);
@@ -61,7 +66,11 @@ public final class MovieTicketSale extends Operation {
     }
 
     /**
-     * @return true if the found state.dat file is successfully loaded, false if the file isn't found
+     * Instantiates the <code>state</code> attribute of this class from the "state.dat" file in the project directory,
+     * if it's found.
+     *
+     * @return <p><code>true</code> if the state.dat file is found and successfully loaded</p>
+     *         <p><code>false</code> if the file isn't found</p>
      */
     public boolean deserializeMultiplexState() throws IOException, ClassNotFoundException {
         if (new File(MultiplexState.getFileName()).isFile()) {
@@ -76,12 +85,13 @@ public final class MovieTicketSale extends Operation {
     /**
      * Handles the general flow of the sale
      * @return <p><code>true</code> if the sale was completed successfully in the method <code>performPayment</code>.</p>
-     *         <p><code>false</code>if:
+     *         <p><code>false</code> if:
      *         <ul>
-     *             <li>no movie (theater) was selected by the customer</li>
-     *             <li>no session was selected by the customer</li>
-     *             <li>no seat was selected by the customer</li>
-     *             <li><code>performPayment<code>'s call returns false</li>
+     *             <li>cancel button is pressed by the customer at any given time</li>
+     *             <li>no movie (theater) was selected by the customer until timeout</li>
+     *             <li>no session was selected by the customer until timeout</li>
+     *             <li>no seat was selected by the customer until timeout</li>
+     *             <li><code>performPayment<code>'s call returns <code>false</code></li>
      *         </ul>
      *         </p>
      */
@@ -119,10 +129,11 @@ public final class MovieTicketSale extends Operation {
     }
 
     /**
-     * Builds a selector menu via <code>MenuModeSelector.Builder</code>, which handles its display and events.
+     * Builds a selector menu via <code>MenuModeSelector.Builder</code>, which handles the display and events.
      * Presents on the dispenser screen the list of available movies to select when calling
      * <code>theaterSelector.getPick()</code>.
-     * @return the theater corresponding to the selected movie, or null if no movie was selected.
+     * @return <p>the theater which contains the movie title the customer selected</p>
+     *         <p><code>null</code> if no movie was selected by the customer.</p>
      */
     private Theater selectTheater(){
 
@@ -138,8 +149,7 @@ public final class MovieTicketSale extends Operation {
     }
 
     /**
-     *
-     * @param theater movie (theater) selected by the customer
+     * @param theater theater (movie title) selected by the customer
      * @return session which was selected by the customer, or null if no session was selected.
      */
     private Session selectSession(Theater theater){
@@ -193,7 +203,7 @@ public final class MovieTicketSale extends Operation {
                 //botón aceptar
                 case 'B' -> {cancel = false; accept = true;}
 
-                //click en asiento
+                //click en mapa del teatro
                 default -> {
                     cancel = false; accept = false;
                     handleClick(dispenserReturn, theater, selectedSeats, session);
@@ -275,9 +285,9 @@ public final class MovieTicketSale extends Operation {
      * @param theater currently displayed theater
      * @param selectedSeats contains the currently selected seats by the customer
      * @param session contains the state of the displayed theater's seats
-     * @return <p>true if the seat is not an empty space, isn't occupied by someone else,
+     * @return <p><code>true</code> if the seat is not an empty space, isn't occupied by someone else,
      * and if the maximum number of selected seats is not surpassed.</p>
-     * <p>false if otherwise.</p>
+     * <p><code>false</code> if otherwise.</p>
      */
     private boolean validPick(Seat pickedSeat, Theater theater, ArrayList<Seat> selectedSeats , Session session){
         boolean isNotEmptySpace = theater.hasSeat(pickedSeat);
@@ -318,6 +328,14 @@ public final class MovieTicketSale extends Operation {
         return new Seat(row, col);
     }
 
+    /**
+     * Delegates the handling of the payment to the <code>PerformPayment</code> class's method <code>doOperation</code>
+     * @param selectedTheater
+     * @param selectedSession
+     * @param selectedSeats
+     * @return <p><code>true</code> if the payment is completed succesfully</p>
+     *         <p><code>false</code> if the payment is not completed, cancelled, or interrupted</p>
+     */
     private boolean performPayment(Theater selectedTheater, Session selectedSession, ArrayList<Seat> selectedSeats) {
 
         payment.setPurchase(selectedTheater, selectedSession, selectedSeats);

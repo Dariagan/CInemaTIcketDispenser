@@ -11,7 +11,8 @@ public final class CardReturner extends Operation implements Serializable {
     }
 
     /**
-     * @return true if the customer recovered his card, false if not
+     * @return <p><code>true</code> if the customer recovered his card</p>
+     *         <p><code>false</code> if not</p>
      */
     @Override
     public boolean doOperation() {
@@ -24,7 +25,8 @@ public final class CardReturner extends Operation implements Serializable {
     }
 
     /**
-     * @return true if the customer recovered his card, false if not
+     * @return <p><code>true</code> if the customer recovered his card</p>
+     *         <p><code>false</code> if not</p>
      */
     public boolean returnUnwantedCard() {
 
@@ -34,7 +36,8 @@ public final class CardReturner extends Operation implements Serializable {
     }
 
     /**
-     * @return true if the customer recovered his card, false if not
+     * @return <p><code>true</code> if the customer recovered his card</p>
+     *         <p><code>false</code> if not</p>
      */
     public boolean returnCreditCard(){
         getDispenser().setMessageMode();

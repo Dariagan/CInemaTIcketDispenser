@@ -9,7 +9,7 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.ResourceBundle;
 
-public final class TicketFormatter {//static
+public final class TicketFormatter {
 
     /**
      * @param movie movie from which to get the title

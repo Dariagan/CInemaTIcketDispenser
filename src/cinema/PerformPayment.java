@@ -35,8 +35,8 @@ public final class PerformPayment extends Operation{
     /**
      * <p>Handles the flow of the treatment of possible incidents during the beginning of the purchase
      * (communication with the bank not available, or the customer left)</p>
-     * @return <p>true if the subdelegate method <code>purchase()</code> managed to complete the purchase.</p>
-     * <p>false if the communication couldn't be established or was interrupted,
+     * @return <p><code>true</code> if the subdelegate method <code>purchase()</code> managed to complete the purchase.</p>
+     * <p><code>false</code> if the communication couldn't be established or was interrupted,
      * or if the subdelegate method couldn't complete the purchase.</p>
      */
     @Override
@@ -66,8 +66,8 @@ public final class PerformPayment extends Operation{
      * <p>Returns to the customer his previously inserted credit card if he can't cover the purchase with his balance, or,
      * if he completed the purchase successfully.</p>
      * @throws CommunicationException if the communication with the bank is interrupted
-     * @return <p>true if the purchase has been completed successfully</p>
-     *         <p>false if not</p>
+     * @return <p><code>true</code> if the purchase has been completed successfully</p>
+     *         <p><code>false</code> if not</p>
      */
     private boolean purchase() throws CommunicationException {
 

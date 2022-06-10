@@ -2,9 +2,7 @@ package cinema.menu_building;
 
 import cinema.Multiplex;
 import sienens.CinemaTicketDispenser;
-
 import java.util.ArrayList;
-import java.util.Locale;
 
 public final class MenuModeSelector extends AbstractSelector {
 

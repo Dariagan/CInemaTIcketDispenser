@@ -38,8 +38,8 @@ public final class LanguageSelection extends Operation{
      * <p>Creates a menu calling the <code>buildLanguageSelectionMenu</code> method.</p>
      * <p>Displays it and gets customer's response by executing <code>menu.getPick().</code></p>
      *
-     * @return <p>True if a language is selected.</p>
-     * <p>False if the there's a timeout or the cancel button is pressed by the customer.</p>
+     * @return <p><code>true</code> if a language is selected.</p>
+     * <p><code>false</code> if the there's a timeout or the cancel button is pressed by the customer.</p>
      */
     @Override
     public boolean doOperation() {

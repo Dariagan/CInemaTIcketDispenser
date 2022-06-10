@@ -72,14 +72,6 @@ public abstract class AbstractSelector {
         }
     }
 
-    /**
-     *
-     */
-    private void display(){
-        changeDispenserMode();
-        displayTextAndExtra();
-        displayOptionButtons();
-    }
 
     /**
      *
@@ -105,7 +97,7 @@ public abstract class AbstractSelector {
     /**
      *
      */
-    private Object doGetPickLoop() {
+    private Object doGetPickLoop() {//es el template method pattern
         Object pick;
         continueLoop = true;
         do {
@@ -128,7 +120,8 @@ public abstract class AbstractSelector {
      *
      *
      */
-    abstract Object getIterationPick(char dispenserReturn);
+
+    abstract Object getIterationPick(char dispenserReturn);//es el template method pattern
 
     private boolean continueLoop;
 
@@ -145,7 +138,16 @@ public abstract class AbstractSelector {
         }
     }
 
-    abstract void changeDispenserMode();
+    /**
+     *
+     */
+    private void display(){//template method pattern 2
+        changeDispenserMode();
+        displayTextAndExtra();
+        displayOptionButtons();
+    }
+
+    abstract void changeDispenserMode();//template method pattern 2
 
     private void displayTextAndExtra(){
         dispenser.setTitle(TITLE);
@@ -154,6 +156,6 @@ public abstract class AbstractSelector {
     }
     void setExtra(){}
 
-    abstract void displayOptionButtons();
+    abstract void displayOptionButtons();//template method pattern 3
 
 }
