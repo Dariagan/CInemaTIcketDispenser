@@ -92,13 +92,17 @@ public abstract class AbstractSelector {
             return true;
     }
 
+    /**
+     * Gets object picked by client
+     * @return object selected by client
+     */
     public Object getPick(){
         display();
         return doGetPickLoop();
     }
 
     /**
-     *
+     * @return object selected by client
      */
     private Object doGetPickLoop() {
         Object pick;
