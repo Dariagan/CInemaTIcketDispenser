@@ -14,6 +14,11 @@ public final class TheaterFile extends File {
         super(file.getAbsolutePath());
     }
 
+    /**
+     * Reads the theater's number from its file name
+     * @return the number of the theater put in the file name.
+     * @throws RuntimeException if the theater file name is not adequate to be read from
+     */
     public int getTheaterNumber(){
 
         String fileName = this.getName();
@@ -26,6 +31,17 @@ public final class TheaterFile extends File {
         else throw new RuntimeException("Theater file name " + fileName + " not recognized.");
     }
 
+    /**
+     * <p>Reads through all the asterisks and spaces from the theater file to obtain the position of all the existent seats,
+     * and add all the instances of <code>Seat</code> constructed from their position to a set, which is finally returned.</p>
+     * <p>Sets value of the first position of the passed arrays <code>maxRows</code> and <code>maxCols</code> to
+     * the maximum number of row and columns found in the file, respectively.</p>
+     *
+     * @param file read theater file
+     * @param maxRows array used to pass the maximum number of rows by reference, to its first position.
+     * @param maxCols array used to pass the maximum number of columns by reference, to its first position.
+     * @return <p>set of existent seats (excluding empty tiles)</p>
+     */
     public TreeSet<Seat> getSeats (TheaterFile file, int[] maxRows, int[] maxCols){
         try{
             String filePath = file.getAbsolutePath();

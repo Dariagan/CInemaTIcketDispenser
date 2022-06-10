@@ -37,6 +37,11 @@ public final class TicketFormatter {
         return purchases.format(messageArguments);
     }
 
+    /**
+     * @param price price in €
+     * @param language language to translate to
+     * @return formatted and localized pricing
+     */
     public static String getFormattedPricing(int price, ResourceBundle language){
         return String.format("%s: %d€", language.getString("price"), price);
     }

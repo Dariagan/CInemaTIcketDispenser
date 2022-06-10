@@ -8,7 +8,6 @@ import java.util.*;
 
 public final class Theater implements Serializable, Comparable<Theater>{
 
-
     private final int NUMBER;
     private final int PRICE;
     private final Movie movie;

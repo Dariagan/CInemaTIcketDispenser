@@ -30,6 +30,7 @@ public final class LanguageSelection extends Operation{
      * <code>adaptedLocales</code>.
      * @param language language code
      */
+    @SuppressWarnings("SameParameterValue")
     private void createLocale(String language){
         Locale locale = new Locale(language);
         adaptedLocales.add(new LocaleAdapter(locale));
@@ -40,6 +41,7 @@ public final class LanguageSelection extends Operation{
      * @param language language code
      * @param country country code
      */
+    @SuppressWarnings("SameParameterValue")
     private void createLocale(String language, String country){
         Locale locale = new Locale(language, country);
         adaptedLocales.add(new LocaleAdapter(locale));

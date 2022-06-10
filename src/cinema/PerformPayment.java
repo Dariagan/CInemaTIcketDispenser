@@ -201,6 +201,7 @@ public final class PerformPayment extends Operation{
      * @param message the message to internally build, and then display on the dispenser screen
      * @param seconds the number of seconds for which to display the message, and then continue
      */
+    @SuppressWarnings("SameParameterValue")
     private void displayMessage(Message message, int seconds){
         if (seconds <= 0) throw new RuntimeException("Negative or zero number of seconds not allowed");
         builder.reset();

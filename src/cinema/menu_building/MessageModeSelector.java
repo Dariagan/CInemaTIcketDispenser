@@ -25,6 +25,7 @@ public final class MessageModeSelector extends AbstractSelector {
     /**
      * This inner class's purpose is to modularly construct each attribute of the class it is contained in.
      */
+    @SuppressWarnings("UnusedReturnValue")
     public final static class Builder extends AbstractSelector.Builder{
 
         private boolean acceptsViaCreditCards = false;

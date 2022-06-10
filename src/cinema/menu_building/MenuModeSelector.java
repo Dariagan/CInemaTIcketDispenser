@@ -4,6 +4,13 @@ import cinema.Multiplex;
 import sienens.CinemaTicketDispenser;
 import java.util.ArrayList;
 
+/**
+ *
+ *
+ *
+ * @author Stefano
+ */
+
 public final class MenuModeSelector extends AbstractSelector {
 
     private final ArrayList optionList;
@@ -19,6 +26,7 @@ public final class MenuModeSelector extends AbstractSelector {
     /**
      * This inner class's purpose is to modularly construct each attribute of the class it is contained in.
      */
+    @SuppressWarnings("UnusedReturnValue")
     public final static class Builder extends AbstractSelector.Builder{
         private ArrayList optionList;
         private String image = null;

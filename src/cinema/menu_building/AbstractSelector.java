@@ -33,6 +33,7 @@ public abstract class AbstractSelector {
     /**
      * This inner class's purpose is to modularly construct each attribute of the class it is contained in.
      */
+    @SuppressWarnings("UnusedReturnValue")
     public abstract static class Builder {
         private final CinemaTicketDispenser dispenser;
         private final Multiplex multiplex;
@@ -60,6 +61,7 @@ public abstract class AbstractSelector {
             this.hasCancelButton = true;
             return this;
         }
+        @SuppressWarnings("unused")
         public abstract AbstractSelector build();
 
         /**
