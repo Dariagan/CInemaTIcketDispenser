@@ -110,8 +110,8 @@ public final class TicketFormatter {
         final Random random = new Random();
 
         for (float i = 0; i < 22; i++) {
-            int pick = random.nextInt(3);
-            switch (pick) {
+            int bar = random.nextInt(3);
+            switch (bar) {
                 case 0-> {builder.append("❘"); i-=0.9;}
                 case 1-> builder.append("❙");
                 case 2-> {builder.append("❚"); i+=0.2;}

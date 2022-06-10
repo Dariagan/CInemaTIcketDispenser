@@ -25,10 +25,21 @@ public final class LanguageSelection extends Operation{
         createLocale("eu", "ES");
     }
 
+    /**
+     * Constructs the corresponding locale to the passed <code>language</code>, adapts and adds it to
+     * <code>adaptedLocales</code>.
+     * @param language language code
+     */
     private void createLocale(String language){
         Locale locale = new Locale(language);
         adaptedLocales.add(new LocaleAdapter(locale));
     }
+    /**
+     * Constructs the corresponding locale to the passed <code>language</code> and <code>country</code>, adapts and adds it to
+     * <code>adaptedLocales</code>.
+     * @param language language code
+     * @param country country code
+     */
     private void createLocale(String language, String country){
         Locale locale = new Locale(language, country);
         adaptedLocales.add(new LocaleAdapter(locale));

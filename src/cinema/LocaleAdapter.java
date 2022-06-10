@@ -10,12 +10,12 @@ import java.util.Locale;
  *
  * <p>For example, if the <code>toString()</code> method of a <code>Locale</code> object constructed as:
  * <code>new Locale("ca","ES)</code> were called, it would return the <code>String</code> <code>"ca_ES"</code>,
- * instead of <code>"Catalán"</code></p>
+ * instead of <code>"Catalán"</code>.</p>
  *
  * <p>When an <code>ArrayList&lt;LocaleAdapter&gt;</code> is passed to the <code>setOptionList(ArrayList optionList)</code>
  * method of <code>MenuModeSelector.Builder</code>, instead of an <code>ArrayList&lt;Locale&gt;</code>, then when
  * <code>displayOptionButtons()</code> is called, this class's <code>toString()</code> method is called, instead of
- * the <code>Locale</code>'s, which is not suited for display.</p>
+ * the <code>Locale</code>'s (not suited for display).</p>
  *
  * @param locale adaptee
  */

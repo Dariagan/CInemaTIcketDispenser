@@ -20,7 +20,6 @@ public final class AssociateFile extends File {
             java.io.FileReader fr = new java.io.FileReader(this.getAbsolutePath());
             BufferedReader br = new BufferedReader(fr);
 
-
             String line;
 
             while (!isNull(line = br.readLine())) {

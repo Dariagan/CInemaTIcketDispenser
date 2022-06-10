@@ -15,12 +15,12 @@ public abstract class AbstractSelector {
     private final String TITLE;
     private final String DESCRIPTION;
     private final boolean HAS_CANCEL_BUTTON;
-    private final String cancelButtonKey;
+    private final String CANCEL_BUTTON_KEY = "cancel";
 
     CinemaTicketDispenser getDispenser() {return dispenser;}
     Multiplex getMultiplex() {return multiplex;}
     boolean hasCancelButton() {return HAS_CANCEL_BUTTON;}
-    String getCancelButtonKey() {return cancelButtonKey;}
+    String getCANCEL_BUTTON_KEY() {return CANCEL_BUTTON_KEY;}
 
     AbstractSelector(Builder builder){
         this.dispenser = builder.dispenser;
@@ -28,11 +28,10 @@ public abstract class AbstractSelector {
         this.TITLE = builder.title;
         this.DESCRIPTION = builder.description;
         this.HAS_CANCEL_BUTTON = builder.hasCancelButton;
-        this.cancelButtonKey = builder.cancelButtonKey;
     }
 
     /**
-     *
+     * This inner class's purpose is to modularly construct the attributes of the class it is contained in.
      */
     public abstract static class Builder {
         private final CinemaTicketDispenser dispenser;
@@ -40,7 +39,6 @@ public abstract class AbstractSelector {
         private String title = "";
         private String description = "";
         private boolean hasCancelButton = false;
-        private String cancelButtonKey = "cancel";
 
         boolean hasCancelButton() {
             return hasCancelButton;
@@ -63,18 +61,24 @@ public abstract class AbstractSelector {
             return this;
         }
         public abstract AbstractSelector build();
+
+        /**
+         * Resets the builder to its default settings.
+         */
         public Builder reset(){
             this.title = "";
             this.description = "";
             this.hasCancelButton = false;
-            this.cancelButtonKey = "cancel";
             return this;
         }
     }
 
-
     /**
+     * Displays the constructed menu for the passed number of <code>seconds</code>, while also handling unwanted inserted
+     * credit cards in the process.
      *
+     * @return <p><code>true</code> if no credit cards are inserted, or if the inserted credit card was recovered.</p>
+     *         <p><code>false</code> if an inserted credit card is not recovered (meaning the customer left during the wait).</p>
      */
     public boolean show(int seconds){
         display();
@@ -97,7 +101,7 @@ public abstract class AbstractSelector {
     /**
      *
      */
-    private Object doGetPickLoop() {//es el template method pattern
+    private Object doGetPickLoop() {
         Object pick;
         continueLoop = true;
         do {
@@ -117,11 +121,10 @@ public abstract class AbstractSelector {
     }
 
     /**
-     *
-     *
+     * Template method to be implemented in subclasses of <code>AbstractSelector</code>
+     * @return <code>Object</code> which customer picked from option menu, or <code>null</code> if nothing was picked
      */
-
-    abstract Object getIterationPick(char dispenserReturn);//es el template method pattern
+    abstract Object getIterationPick(char dispenserReturn);
 
     private boolean continueLoop;
 
@@ -138,16 +141,13 @@ public abstract class AbstractSelector {
         }
     }
 
-    /**
-     *
-     */
-    private void display(){//template method pattern 2
+    private void display(){
         changeDispenserMode();
         displayTextAndExtra();
         displayOptionButtons();
     }
 
-    abstract void changeDispenserMode();//template method pattern 2
+    abstract void changeDispenserMode();
 
     private void displayTextAndExtra(){
         dispenser.setTitle(TITLE);
@@ -156,6 +156,6 @@ public abstract class AbstractSelector {
     }
     void setExtra(){}
 
-    abstract void displayOptionButtons();//template method pattern 3
+    abstract void displayOptionButtons();
 
 }

@@ -3,6 +3,9 @@ package cinema;
 import java.io.Serializable;
 
 /**
+ *
+ *
+ *
  * @author Stefano
  */
 public record Seat(int row, int col) implements Serializable, Comparable<Seat> {

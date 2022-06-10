@@ -55,7 +55,6 @@ public final class MovieTicketSale extends Operation {
 
     /**
      * Saves the current multiplex state in a file called "state.dat" in the project directory.
-     * @throws IOException
      */
     public void serializeMultiplexState() throws IOException {
         FileOutputStream fOut = new FileOutputStream(MultiplexState.getFileName());
@@ -330,10 +329,7 @@ public final class MovieTicketSale extends Operation {
 
     /**
      * Delegates the handling of the payment to the <code>PerformPayment</code> class's method <code>doOperation</code>
-     * @param selectedTheater
-     * @param selectedSession
-     * @param selectedSeats
-     * @return <p><code>true</code> if the payment is completed succesfully</p>
+     * @return <p><code>true</code> if the payment is completed successfully</p>
      *         <p><code>false</code> if the payment is not completed, cancelled, or interrupted</p>
      */
     private boolean performPayment(Theater selectedTheater, Session selectedSession, ArrayList<Seat> selectedSeats) {

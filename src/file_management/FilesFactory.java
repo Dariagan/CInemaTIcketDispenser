@@ -28,7 +28,13 @@ public abstract class FilesFactory {
         this.FILENAME_NOUN = fileNameNoun;
     }
 
-
+    /**
+     * Returns a list of files whose file extension is the same as the factory's established, and also which meet the
+     * criteria established by the sub-factory' implementation of the
+     * <code>extraSelectionConditionIsMet(String fileName)</code> method.
+     *
+     * @return positively selected files
+     */
     ArrayList<File> getMatchingFiles() {
 
         String dirPath = System.getProperty("user.dir") + "\\data\\" + FILES_FOLDER;
@@ -54,6 +60,5 @@ public abstract class FilesFactory {
         }
         return foundFiles;
     }
-
     abstract boolean extraSelectionConditionIsMet(String fileName);
 }

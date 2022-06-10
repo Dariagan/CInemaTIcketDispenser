@@ -4,6 +4,9 @@ import cinema.Multiplex;
 import sienens.CinemaTicketDispenser;
 
 /**
+ *
+ *
+ *
  * @author Stefano
  */
 public final class MessageModeSelector extends AbstractSelector {
@@ -19,6 +22,9 @@ public final class MessageModeSelector extends AbstractSelector {
         this.acceptButtonKey = builder.acceptButtonKey;
     }
 
+    /**
+     * This inner class's purpose is to modularly construct the attributes of the class it is contained in.
+     */
     public final static class Builder extends AbstractSelector.Builder{
 
         private boolean acceptsViaCreditCards = false;
@@ -41,6 +47,10 @@ public final class MessageModeSelector extends AbstractSelector {
         public MessageModeSelector build(){
             return new MessageModeSelector(this);
         }
+
+        /**
+         * Resets the builder to its default settings.
+         */
         @Override
         public Builder reset(){
             super.reset();
@@ -51,6 +61,11 @@ public final class MessageModeSelector extends AbstractSelector {
         }
     }
 
+    /**
+     * gets the instance of <code>Object</code> corresponding to the customer's response
+     * @param dispenserReturn char returned from <code>CinemaTicketDispenser</code>'s <code>waitEvent(int seconds)</code> method
+     * @return instantiated <code>Boolean</code>, or <code>null</code>.
+     */
     @Override
     public Object getIterationPick(char dispenserReturn){
 

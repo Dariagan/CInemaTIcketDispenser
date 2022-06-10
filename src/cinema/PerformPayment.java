@@ -33,11 +33,21 @@ public final class PerformPayment extends Operation{
     }
 
     /**
-     * <p>Handles the flow of the treatment of possible incidents during the beginning of the purchase
-     * (communication with the bank not available, or the customer left)</p>
+     * Controls the flow of the program against possible incidents during the purchase:
+     * <ul>
+     *     <li>communication with the bank not available or interrupted</li>
+     *     <li>customer cancelled</li>
+     *     <li>customer timed out</li>
+     * </ul>
      * @return <p><code>true</code> if the subdelegate method <code>purchase()</code> managed to complete the purchase.</p>
-     * <p><code>false</code> if the communication couldn't be established or was interrupted,
-     * or if the subdelegate method couldn't complete the purchase.</p>
+     * <br>
+     * <p><code>false</code> if:
+     * <ul>
+     *  <li>communication with the bank not available or interrupted</li>
+     *  <li>customer cancelled</li>
+     *  <li>customer timed out</li>
+     *  <li>the subdelegate method <code>purchase()</code> couldn't complete the purchase for any reason</li>
+     * </ul>
      */
     @Override
     public boolean doOperation() {
@@ -62,7 +72,7 @@ public final class PerformPayment extends Operation{
     }
 
     /**
-     * <p>Handles flow of the ticket purchase from the point on when the communication with the bank is established.</p>
+     * <p>Manages the flow of the ticket purchase from the point on when the communication with the bank is established.</p>
      * <p>Returns to the customer his previously inserted credit card if he can't cover the purchase with his balance, or,
      * if he completed the purchase successfully.</p>
      * @throws CommunicationException if the communication with the bank is interrupted
@@ -109,7 +119,7 @@ public final class PerformPayment extends Operation{
     }
     /**
      * <p>Internally builds an instance of <code>MessageModeSelector</code>, utilizing its class builder,
-     * meant for handling the customer's paayment
+     * the returned instance is meant for handling the customer's payment.</p>
      *
      * @return a constructed <code>MessageModeSelector</code> ready for display and handling dispenser events
      */
@@ -126,7 +136,7 @@ public final class PerformPayment extends Operation{
         switch (menuType) {
             case INSERT_CARD -> builder.setAcceptViaCreditCard();
             case CONFIRMATION -> builder.setAcceptButton();
-            default -> throw new RuntimeException("MenuType not implemented");
+            default -> throw new RuntimeException("passed MenuType not implemented");
         }
         return builder.build();
     }

@@ -16,6 +16,9 @@ public final class MenuModeSelector extends AbstractSelector {
         this.IMAGE = builder.image;
     }
 
+    /**
+     * This inner class's purpose is to modularly construct the attributes of the class it is contained in.
+     */
     public final static class Builder extends AbstractSelector.Builder{
         private ArrayList optionList;
         private String image = null;
@@ -34,12 +37,16 @@ public final class MenuModeSelector extends AbstractSelector {
         private void validate(){
             int cancelButtonSize = super.hasCancelButton() ? 1 : 0;
             if (this.optionList.size() > DISPENSER_OPTION_LIMIT - cancelButtonSize)
-                throw new RuntimeException("Dispenser's maximum number of options surpassed");
+                throw new RuntimeException("Dispenser's maximum number of options surpassed in set optionList");
         }
         public MenuModeSelector build(){
             validate();
             return new MenuModeSelector(this);
         }
+
+        /**
+         * Resets the builder to its default settings.
+         */
         @Override
         public Builder reset(){
             super.reset();
@@ -66,13 +73,14 @@ public final class MenuModeSelector extends AbstractSelector {
             getDispenser().setOption(i, optionList.get(i).toString());
 
         int nextIndex = optionList.size();
+
         if(super.hasCancelButton()){
-            getDispenser().setOption(optionList.size(), getMultiplex().getLanguage().getString(getCancelButtonKey()));
+            getDispenser().setOption(optionList.size(), getMultiplex().getLanguage().getString(getCANCEL_BUTTON_KEY()));
             nextIndex++;
         }
-        for (int i = nextIndex; i <= DISPENSER_OPTION_LIMIT - 1; i++){
+
+        for (int i = nextIndex; i <= DISPENSER_OPTION_LIMIT - 1; i++)
             getDispenser().setOption(i, null);
-        }
     }
 
     @Override
@@ -80,7 +88,7 @@ public final class MenuModeSelector extends AbstractSelector {
 
         Object pick;
         if (dispenserReturn != '1') {
-            pick = getPickedListObject(dispenserReturn);
+            pick = getPickedOptionListObject(dispenserReturn);
             super.endLoop();
         }else {
             pick = null;
@@ -89,13 +97,13 @@ public final class MenuModeSelector extends AbstractSelector {
         return pick;
     }
 
-    private Object getPickedListObject(char dispenserReturn){
+    private Object getPickedOptionListObject(char dispenserReturn){
 
-        if(listElementWasPicked(dispenserReturn))
+        if(optionListElementWasPicked(dispenserReturn))
             return (optionList.get(dispenserReturnToListIndex(dispenserReturn)));
         else return null;
     }
-    private boolean listElementWasPicked(char dispenserReturn){
+    private boolean optionListElementWasPicked(char dispenserReturn){
         return dispenserReturnToListIndex(dispenserReturn) < optionList.size();
     }
     private int dispenserReturnToListIndex(char dispenserReturn){

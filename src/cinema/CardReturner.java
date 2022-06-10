@@ -21,7 +21,7 @@ public final class CardReturner extends Operation implements Serializable {
 
     @Override
     public String toString() {
-        return "Credit card manager";
+        return "Card returner";
     }
 
     /**
