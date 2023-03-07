@@ -50,7 +50,7 @@ public final class CardReturner extends Operation implements Serializable {
 
         boolean customerRecoveredCard;
 
-        getDispenser().retainCreditCard(false);//si no pongo esto no espera y se traga la tarjeta instantáneamente
+        getDispenser().retainCreditCard(false);
         if (getDispenser().expelCreditCard(30)) {
             customerRecoveredCard = true;
         }
