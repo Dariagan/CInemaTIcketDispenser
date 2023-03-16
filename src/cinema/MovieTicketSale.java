@@ -189,20 +189,20 @@ public final class MovieTicketSale extends Operation {
             char dispenserReturn = getDispenser().waitEvent(30);
             switch (dispenserReturn){
 
-                case 0,'A' -> {//(timeout o botón cancelar)
+                case 0,'A' -> {//timeout or cancel button clicked
                     cancel = true; accept = false;
                     unocuppyAllSelectedSeats(selectedSeats, session);
                 }
-                case '1' ->{//tarjeta introducida
+                case '1' ->{//card introduced
                     if (getMultiplex().getCreditCardManager().returnUnwantedCard()){
                         cancel = false;
                         presentSeats(theater, session);
                     } else cancel = true; accept = false;
                 }
-                //botón aceptar
+                //accept button clicked
                 case 'B' -> {cancel = false; accept = true;}
 
-                //click en mapa del teatro
+                //theater map clicked
                 default -> {
                     cancel = false; accept = false;
                     handleClick(dispenserReturn, theater, selectedSeats, session);
