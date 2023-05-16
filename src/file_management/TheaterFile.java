@@ -46,25 +46,25 @@ public final class TheaterFile extends File {
         try{
             String filePath = file.getAbsolutePath();
             java.io.FileReader fr = new java.io.FileReader(filePath);
-            BufferedReader br  = new BufferedReader(fr);
-
-            TreeSet<Seat> foundSeats = new TreeSet<>();
-            maxRows[0] = 0;
-            int i; String line;
-            for(i = 1; !isNull(line = br.readLine()); i++){
-                int j;
-                for (j = 1; j <= line.length(); j++){
-                    if (line.charAt(j-1) == '*'){
-                        foundSeats.add(new Seat(i, j));
+            try (BufferedReader br = new BufferedReader(fr)) {
+                TreeSet<Seat> foundSeats = new TreeSet<>();
+                maxRows[0] = 0;
+                int i; String line;
+                for(i = 1; !isNull(line = br.readLine()); i++){
+                    int j;
+                    for (j = 1; j <= line.length(); j++){
+                        if (line.charAt(j-1) == '*'){
+                            foundSeats.add(new Seat(i, j));
+                        }
                     }
+                    maxCols[0] = Math.max(maxCols[0], j - 1);
                 }
-                maxCols[0] = Math.max(maxCols[0], j - 1);
-            }
-            maxRows[0] = i - 1;
+                maxRows[0] = i - 1;
 
-            br.close();
-            fr.close();
-            return foundSeats;
+                br.close();
+                fr.close();
+                return foundSeats;
+            }
         }
         catch (IOException e){
             throw new RuntimeException(e);

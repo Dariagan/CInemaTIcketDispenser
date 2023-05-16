@@ -8,7 +8,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import static java.util.Objects.isNull;
 
-public final class MovieFile extends File implements Comparable<File>{
+public final class MovieFile extends File {
 
     private final String TIME_FORMAT = "^(2[0-3]|[01]?[0-9]):([0-5]?[0-9])$";
 
@@ -42,9 +42,9 @@ public final class MovieFile extends File implements Comparable<File>{
         return System.getProperty("user.dir") + "\\data\\pics\\" + getRawDataSubString(Field.POSTER);
     }
     public int getPrice (){
-        String rawDataString =  getRawDataSubString(Field.PRICE);
+        String rawDataString = getRawDataSubString(Field.PRICE);
 
-        return Integer.parseInt(rawDataString.substring(0, rawDataString.length()-2));
+        return Integer.parseInt(rawDataString);
     }
     public ArrayList<LocalTime> getSessionsTimes(){
         return collectSessionsTimes(getRawDataSubString(Field.SESSIONS));

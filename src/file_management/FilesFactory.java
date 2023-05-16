@@ -1,9 +1,11 @@
 package file_management;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 
-public abstract class FilesFactory {
+public abstract class FilesFactory <T extends File>{
 
     private final String FILES_FOLDER;
     private final String FILE_EXTENSION;
@@ -35,19 +37,22 @@ public abstract class FilesFactory {
      *
      * @return list of files which match the file extension, and the sub-factory's selection condition
      */
-    ArrayList<File> getMatchingFiles() {
+    public ArrayList<T> getMatchingFiles() {
 
         String dirPath = System.getProperty("user.dir") + "\\data\\" + FILES_FOLDER;
         File dataFolder = new File(dirPath);
 
         File[] readFiles = dataFolder.listFiles();
-        ArrayList<File> foundFiles = new ArrayList<>();
+        ArrayList<T> foundFiles = new ArrayList<>();
 
         if (readFiles != null) {
             for (File file : readFiles) {
                 String fileName = file.getName();
                 if (fileName.endsWith(FILE_EXTENSION) && extraSelectionConditionIsMet(fileName)) {
-                    foundFiles.add(file);
+                
+                    T newFile = createInstance(file);
+                    foundFiles.add(newFile);
+                    
                     System.out.printf("%s %s\n", fileName, "loaded");
                 } else {
                     System.out.printf("%s was not loaded, doesn't match file-name format of %s\n",
@@ -61,4 +66,21 @@ public abstract class FilesFactory {
         return foundFiles;
     }
     abstract boolean extraSelectionConditionIsMet(String fileName);
+
+    private T createInstance(File file) {
+        try {
+            Class<?> clazz = Class.forName(getClassName());
+            Constructor<?> constructor = clazz.getDeclaredConstructor(File.class);
+            constructor.setAccessible(true);
+            return (T) constructor.newInstance(file);
+        } catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException
+                | InstantiationException | InvocationTargetException e) {
+            throw new RuntimeException("Failed to create instance of type T.", e);
+        }
+    }
+
+    private String getClassName() {
+        return getClass().getGenericSuperclass().getTypeName()
+                .replaceAll(".*<(.+)>", "$1");
+    }
 }

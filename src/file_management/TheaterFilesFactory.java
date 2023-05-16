@@ -1,9 +1,6 @@
 package file_management;
 
-import java.io.File;
-import java.util.ArrayList;
-
-public final class TheaterFilesFactory extends FilesFactory{
+public final class TheaterFilesFactory extends FilesFactory<TheaterFile>{
 
     public TheaterFilesFactory() {
         super("theaters", ".txt", "Theater");
@@ -37,18 +34,4 @@ public final class TheaterFilesFactory extends FilesFactory{
         return true;
     }
 
-    /**
-     * Gets all the matching files from the parent factory's <code>getMatchingFiles()</code> method, and constructs an
-     * instance of <code>TheaterFile</code> for each file said method returned.
-     * @return list of selected theater files
-     */
-    public ArrayList<TheaterFile> getFiles(){
-        ArrayList<TheaterFile> theaterFiles = new ArrayList<>();
-
-        for (File file : super.getMatchingFiles()){
-            theaterFiles.add(new TheaterFile(file));
-        }
-
-        return theaterFiles;
-    }
 }

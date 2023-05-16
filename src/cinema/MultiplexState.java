@@ -28,9 +28,10 @@ public final class MultiplexState implements Serializable {
         TheaterFilesFactory tFactory = new TheaterFilesFactory();
         MovieFilesFactory mFactory = new MovieFilesFactory();
 
-        ArrayList<MovieFile> movieFiles = mFactory.getFiles();
+        ArrayList<MovieFile> movieFiles = mFactory.getMatchingFiles();
 
-        for (TheaterFile theaterFile : tFactory.getFiles()){
+        for (TheaterFile theaterFile : tFactory.getMatchingFiles()){
+
             theaters.add(new Theater(theaterFile, movieFiles.get(theaterFile.getTheaterNumber() - 1)));
         }
 
@@ -44,7 +45,7 @@ public final class MultiplexState implements Serializable {
     private void loadAssociatesCreditCards(){
         AssociateFilesFactory aFactory = new AssociateFilesFactory();
 
-        for (AssociateFile associateFile: aFactory.getFiles()){
+        for (AssociateFile associateFile: aFactory.getMatchingFiles()){
             allAssociates.addAll(associateFile.getAssociates());
         }
     }

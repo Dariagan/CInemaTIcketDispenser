@@ -1,0 +1,8 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "jars\\AbsoluteLayout.jar",
+        "jars\\CinemaTicketDispenserSimulator.jar",
+        "jars\\UrjcBankServer.jar"
+    ]
+}

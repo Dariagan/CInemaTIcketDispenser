@@ -13,7 +13,7 @@ import java.util.ArrayList;
 
 public final class MenuModeSelector extends AbstractSelector {
 
-    private final ArrayList optionList;
+    private final ArrayList<?> optionList;
     private final String IMAGE;
     private final static int DISPENSER_OPTION_LIMIT = 6;
 
@@ -28,13 +28,13 @@ public final class MenuModeSelector extends AbstractSelector {
      */
     @SuppressWarnings("UnusedReturnValue")
     public final static class Builder extends AbstractSelector.Builder{
-        private ArrayList optionList;
+        private ArrayList<?> optionList;
         private String image = null;
 
         public Builder(CinemaTicketDispenser dispenser, Multiplex multiplex){
             super(dispenser, multiplex);
         }
-        public Builder setOptionList(ArrayList optionList){
+        public Builder setOptionList(ArrayList<?> optionList){
             this.optionList = optionList;
             return this;
         }

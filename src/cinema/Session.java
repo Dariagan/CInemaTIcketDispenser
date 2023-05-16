@@ -34,10 +34,6 @@ public final class Session implements Serializable, Comparable<Session>{
 
     @Override
     public int compareTo(Session o) {
-        if (this.getTime().isAfter(o.getTime())){
-            return 1;
-        }else if (this.getTime().equals(o.getTime())){
-            return 0;
-        } else return -1;
+        return this.getTime().compareTo(o.time);
     }
 }
