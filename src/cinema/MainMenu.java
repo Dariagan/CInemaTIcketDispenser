@@ -31,15 +31,13 @@ public final class MainMenu extends Operation{
 
         Operation pickedOperation;
         boolean pickedAnOption;
-        do {
+        while(true) {
             createMenu();
             pickedOperation = (Operation) menuSelector.getPick();
             pickedAnOption = !isNull(pickedOperation);
-            if(pickedAnOption)
-                if(!pickedOperation.doOperation()){
+            if(pickedAnOption && !pickedOperation.doOperation())
                     getMultiplex().setLanguage(new Locale("es","ES"));
-                }
-        } while(true);
+        } 
     }
 
     @Override
